@@ -6,7 +6,18 @@ using UnityEngine.Networking;
 public class CamScript : NetworkBehaviour {
 
 
-    public Camera cam;
+    private Camera cam;
+
+    void Awake()
+    {
+        cam = GetComponentInChildren<Camera>();
+        cam.gameObject.SetActive(false);
+    }
+
+    public override void OnStartLocalPlayer()
+    {
+        cam.gameObject.SetActive(true);
+    }
     // Use this for initialization
     void Start() {
 
