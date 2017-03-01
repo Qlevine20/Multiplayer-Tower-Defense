@@ -1,19 +1,33 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
-public class Spawn : MonoBehaviour {
+public class Spawn : NetworkBehaviour
+{
     // The Monster that should be spawned
-    public GameObject monsterPrefab;
-    
-    // Spawn Delay in seconds
-    public float interval = 3;
-    
-    // Use this for initialization
-    void Start() {
-        InvokeRepeating("SpawnNext", interval, interval);
+    public GameObject Monster;
+    private GameObject opponentCastle;
+
+
+    void Start()
+    {
+        foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            if (g.transform != transform.parent)
+            {
+                opponentCastle = g;
+            }
+        }
     }
-    
-    void SpawnNext() {
-        Instantiate(monsterPrefab, transform.position, Quaternion.identity);
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            GameObject monster = Instantiate(Monster, transform.position, Quaternion.identity) as GameObject;
+            monster.GetComponent<Monster>().Castle = opponentCastle;
+            NetworkServer.Spawn(monster);
+        }
     }
 }
+
