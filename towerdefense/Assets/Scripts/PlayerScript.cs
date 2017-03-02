@@ -12,14 +12,14 @@ public class PlayerScript : NetworkBehaviour{
     private GameObject point;
     public GameObject tower;
     public Text resourcesText;
-    public int monsterCost = 1;
-    public int towerCost = 5;
-    public bool addResource;
+    private int monsterCost = 3;
+    private int towerCost = 15;
+    //public bool addResource;
     private bool winner = false;
     public bool lost = false;
 
 
-    public int resources = 10;
+    public int resources = 15;
     
 	// Use this for initialization
 	void Start () {
@@ -32,6 +32,7 @@ public class PlayerScript : NetworkBehaviour{
             return;
         }
         SpawnManager = (GameObject)Instantiate(SpawnManager, transform.position, Quaternion.identity);
+		StartCoroutine (ResourceRegen());
     }
 
     public void Update()
@@ -53,12 +54,12 @@ public class PlayerScript : NetworkBehaviour{
             gameObject.transform.GetChild(3).GetChild(2).gameObject.SetActive(true);
         }
 
-        if (addResource)
+        /*if (addResource)
         {
             Debug.Log("adding");
             addResource = false;
-            AddResources(10);
-        }
+            AddResources(3);
+        }*/
 
         if (Input.GetKeyDown(KeyCode.S))
         {
@@ -141,9 +142,14 @@ public class PlayerScript : NetworkBehaviour{
 
     public void UpdateResourcesText()
     {
-        resourcesText.text = "Resources: " + resources.ToString();
+        resourcesText.text = "RESOURCES: " + resources.ToString();
     }
 
+	public IEnumerator ResourceRegen() {
+		yield return new WaitForSeconds (1);
+		AddResources (1);
+		StartCoroutine (ResourceRegen());
+	}
 
 
 
