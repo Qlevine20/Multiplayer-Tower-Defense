@@ -28,7 +28,7 @@ public class Monster : MonoBehaviour {
         // If castle then deal Damage, destroy self
         if (co.gameObject == Castle) {
             co.GetComponentInChildren<Health>().TakeDamage();
-            Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
         }
     }
 

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
-public class Bullet : MonoBehaviour {
+public class Bullet : NetworkBehaviour {
     // Speed
     public float speed = 10;
     
@@ -16,7 +17,7 @@ public class Bullet : MonoBehaviour {
             GetComponent<Rigidbody>().velocity = dir.normalized * speed;
         } else {
             // Otherwise destroy self
-            Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
         }
     }
     
@@ -24,7 +25,7 @@ public class Bullet : MonoBehaviour {
         Health health = co.GetComponentInChildren<Health>();
         if (health) {
             health.TakeDamage();
-            Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
         }
     }
 }

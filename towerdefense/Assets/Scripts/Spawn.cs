@@ -10,6 +10,9 @@ public class Spawn : NetworkBehaviour
     private bool allPlayers = false;
 
 
+    [SyncVar]
+    public bool winner = false;
+
     void Start()
     {
 

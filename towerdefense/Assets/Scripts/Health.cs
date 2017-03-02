@@ -8,6 +8,7 @@ public class Health : NetworkBehaviour {
     public int bars = 5;
     private int currBars = 5;
     
+    
 
     [SyncVar(hook = "OnChangeHealth")]
     public int currentHealth = maxHealth;
@@ -16,16 +17,23 @@ public class Health : NetworkBehaviour {
 
     public void TakeDamage()
     {
-        if (!isServer)
-        {
-            return;
-        }
-
         currentHealth -= 20;
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            Destroy(gameObject);
+            if (gameObject.tag != "Player")
+            {
+                NetworkServer.Destroy(gameObject);
+            }
+            else
+            {
+                gameObject.transform.GetChild(3).GetChild(3).gameObject.SetActive(true);
+                GetComponent<PlayerScript>().lost = true;
+
+            }
+
+
+
         }
 
 
@@ -33,16 +41,22 @@ public class Health : NetworkBehaviour {
 
     void OnChangeHealth(int currentHealth)
     {
-            currBars--;
+        Debug.Log("Change health");
+        currBars--;
         if (currBars > 0)
         {
             tm.text = new string('-', currBars);
         }
-        else if (gameObject.tag != "Player")
+        else
         {
-            gameObject.GetComponent<Monster>().Castle.GetComponent<PlayerScript>().AddResources(10);
+            if (gameObject.tag != "Player")
+            {
+
+                Debug.Log("add");
+                gameObject.GetComponent<Monster>().Castle.GetComponent<PlayerScript>().addResource = true;
+            }
         }
 
-            
     }
+
 }

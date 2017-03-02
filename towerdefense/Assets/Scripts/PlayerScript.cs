@@ -14,6 +14,9 @@ public class PlayerScript : NetworkBehaviour{
     public Text resourcesText;
     public int monsterCost = 1;
     public int towerCost = 5;
+    public bool addResource;
+    private bool winner = false;
+    public bool lost = false;
 
 
     public int resources = 10;
@@ -33,9 +36,28 @@ public class PlayerScript : NetworkBehaviour{
 
     public void Update()
     {
-        if (!isLocalPlayer)
+        if (lost)
         {
             return;
+        }
+        if (!isLocalPlayer)
+        {
+            if (gameObject.GetComponent<Health>().currentHealth == 0)
+            {
+                winner = true;
+            }
+            return;
+        }
+        if (winner)
+        {
+            gameObject.transform.GetChild(3).GetChild(2).gameObject.SetActive(true);
+        }
+
+        if (addResource)
+        {
+            Debug.Log("adding");
+            addResource = false;
+            AddResources(10);
         }
 
         if (Input.GetKeyDown(KeyCode.S))
@@ -111,13 +133,9 @@ public class PlayerScript : NetworkBehaviour{
 
     public void AddResources(int resource)
     {
-        if (!isServer)
-        {
-            return;
-        }
+            resources += resource;
+            UpdateResourcesText();
 
-        resources += resource;
-        UpdateResourcesText();
         
     }
 
