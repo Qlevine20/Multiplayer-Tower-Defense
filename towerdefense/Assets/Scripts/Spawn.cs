@@ -6,28 +6,30 @@ public class Spawn : NetworkBehaviour
 {
     // The Monster that should be spawned
     public GameObject Monster;
-    private GameObject opponentCastle;
+    public GameObject[] playerList;
+    private bool allPlayers = false;
 
 
     void Start()
     {
-        foreach (GameObject g in GameObject.FindGameObjectsWithTag("Player"))
-        {
-            if (g.transform != transform.parent)
-            {
-                opponentCastle = g;
-            }
-        }
+
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S))
+
+        if (!allPlayers)
         {
-            GameObject monster = Instantiate(Monster, transform.position, Quaternion.identity) as GameObject;
-            monster.GetComponent<Monster>().Castle = opponentCastle;
-            NetworkServer.Spawn(monster);
+            playerList = GameObject.FindGameObjectsWithTag("Player");
+            if (playerList != null && playerList.Length == 2)
+            {
+                allPlayers = true;
+            }
+
         }
     }
+
+
+
 }
 

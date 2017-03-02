@@ -4,6 +4,7 @@ using System.Collections;
 public class Health : MonoBehaviour {
     // The TextMesh Component
     TextMesh tm;
+    
 
     // Use this for initialization
     void Start () {
@@ -13,7 +14,7 @@ public class Health : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         // Face the Camera
-        transform.forward = Camera.main.transform.forward;
+        transform.forward = transform.parent.GetChild(1).transform.forward;
     }
     
     // Return the current Health by counting the '-'
