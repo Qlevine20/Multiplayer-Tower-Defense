@@ -1,0 +1,103 @@
+Initialize engine version: 5.5.2f1 (3829d7f588f3)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA GeForce GTX 960M (ID=0x139b)
+    Vendor:   NVIDIA
+    VRAM:     3072 MB
+    Driver:   21.20.16.4542
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll (this message is harmless)
+Loading C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll into Unity Child Domain
+- Completed reload, in  0.160 seconds
+Platform assembly: C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\Monica\Documents\Multiplayer-Tower-Defense\Tower Defense Builds\TowerDefenseBuild_Data\Managed\System.dll (this message is harmless)
+desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 3.816296 ms
+Setting up 2 worker threads for Enlighten.
+  Thread -> id: 1f1c -> priority: 1 
+  Thread -> id: 1ea0 -> priority: 1 
+MatchMakingClient Create :https://mm.unet.unity3d.com/json/reply/CreateMatchRequest
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+DontDestroyOnLoad only work for root GameObjects or components on root GameObjects.
+ 
+(Filename:  Line: 447)
+
+DontDestroyOnLoad only work for root GameObjects or components on root GameObjects.
+ 
+(Filename:  Line: 447)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 1.808592 ms
+
+Unloading 11 unused Assets to reduce memory usage. Loaded Objects now: 13847.
+Total: 4.682271 ms (FindLiveObjects: 0.753777 ms CreateObjectMapping: 0.377679 ms MarkObjects: 1.850074 ms  DeleteObjects: 1.700740 ms)
+
+Log: connection {1} has been disconnected by timeout; address {::ffff:52.87.26.226:9999}
+ServerDisconnected due to error: Timeout
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+NullReferenceException
+  at (wrapper managed-to-native) UnityEngine.GameObject:GetComponentFastPath (System.Type,intptr)
+  at UnityEngine.GameObject.GetComponent[PlayerScript] () [0x00000] in <filename unknown>:0 
+  at Health.OnChangeHealth (Int32 currentHealth) [0x00000] in <filename unknown>:0 
+  at Health.set_NetworkcurrentHealth (Int32 value) [0x00000] in <filename unknown>:0 
+  at Health.TakeDamage () [0x00000] in <filename unknown>:0 
+  at Monster.OnTriggerStay (UnityEngine.Collider co) [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException
+  at (wrapper managed-to-native) UnityEngine.GameObject:GetComponentFastPath (System.Type,intptr)
+  at UnityEngine.GameObject.GetComponent[PlayerScript] () [0x00000] in <filename unknown>:0 
+  at Health.OnChangeHealth (Int32 currentHealth) [0x00000] in <filename unknown>:0 
+  at Health.set_NetworkcurrentHealth (Int32 value) [0x00000] in <filename unknown>:0 
+  at Health.TakeDamage () [0x00000] in <filename unknown>:0 
+  at Monster.OnTriggerStay (UnityEngine.Collider co) [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException
+  at (wrapper managed-to-native) UnityEngine.GameObject:GetComponentFastPath (System.Type,intptr)
+  at UnityEngine.GameObject.GetComponent[PlayerScript] () [0x00000] in <filename unknown>:0 
+  at Health.OnChangeHealth (Int32 currentHealth) [0x00000] in <filename unknown>:0 
+  at Health.set_NetworkcurrentHealth (Int32 value) [0x00000] in <filename unknown>:0 
+  at Health.TakeDamage () [0x00000] in <filename unknown>:0 
+  at Monster.OnTriggerStay (UnityEngine.Collider co) [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException
+  at (wrapper managed-to-native) UnityEngine.GameObject:GetComponentFastPath (System.Type,intptr)
+  at UnityEngine.GameObject.GetComponent[PlayerScript] () [0x00000] in <filename unknown>:0 
+  at Health.OnChangeHealth (Int32 currentHealth) [0x00000] in <filename unknown>:0 
+  at Health.set_NetworkcurrentHealth (Int32 value) [0x00000] in <filename unknown>:0 
+  at Health.TakeDamage () [0x00000] in <filename unknown>:0 
+  at Monster.OnTriggerStay (UnityEngine.Collider co) [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException
+  at (wrapper managed-to-native) UnityEngine.GameObject:GetComponentFastPath (System.Type,intptr)
+  at UnityEngine.GameObject.GetComponent[PlayerScript] () [0x00000] in <filename unknown>:0 
+  at Health.OnChangeHealth (Int32 currentHealth) [0x00000] in <filename unknown>:0 
+  at Health.set_NetworkcurrentHealth (Int32 value) [0x00000] in <filename unknown>:0 
+  at Health.TakeDamage () [0x00000] in <filename unknown>:0 
+  at Bullet.OnTriggerEnter (UnityEngine.Collider co) [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+

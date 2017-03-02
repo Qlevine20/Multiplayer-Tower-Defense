@@ -1,31 +1,48 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
-public class Health : MonoBehaviour {
+public class Health : NetworkBehaviour {
     // The TextMesh Component
-    TextMesh tm;
+    public const int maxHealth = 100;
+    public int bars = 5;
+    private int currBars = 5;
+    
 
-    // Use this for initialization
-    void Start () {
-        tm = GetComponent<TextMesh>();
+    [SyncVar(hook = "OnChangeHealth")]
+    public int currentHealth = maxHealth;
+    public TextMesh tm;
+
+
+    public void TakeDamage()
+    {
+        if (!isServer)
+        {
+            return;
+        }
+
+        currentHealth -= 20;
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+            Destroy(gameObject);
+        }
+
+
     }
-    
-    // Update is called once per frame
-    void Update () {
-        // Face the Camera
-        transform.forward = Camera.main.transform.forward;
-    }
-    
-    // Return the current Health by counting the '-'
-    public int current() {
-        return tm.text.Length;
-    }
-    
-    // Decrease the current Health by removing one '-'
-    public void decrease() {
-        if (current() > 1)
-            tm.text = tm.text.Remove(tm.text.Length - 1);
-        else
-            Destroy(transform.parent.gameObject);
+
+    void OnChangeHealth(int currentHealth)
+    {
+            currBars--;
+        if (currBars > 0)
+        {
+            tm.text = new string('-', currBars);
+        }
+        else if (gameObject.tag != "Player")
+        {
+            gameObject.GetComponent<Monster>().Castle.GetComponent<PlayerScript>().AddResources(10);
+        }
+
+            
     }
 }
