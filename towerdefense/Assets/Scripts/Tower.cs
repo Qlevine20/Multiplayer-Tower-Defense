@@ -8,7 +8,7 @@ public class Tower : NetworkBehaviour {
     public GameObject castle;
     public Transform targ;
     private float counter;
-    public int reloadTime = 1;
+    public float reloadTime = .2f;
     public bool canShoot = false;
     
     // Rotation Speed

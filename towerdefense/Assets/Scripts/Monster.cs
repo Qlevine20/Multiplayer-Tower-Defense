@@ -21,7 +21,11 @@ public class Monster : MonoBehaviour {
 
         }
         if (Castle)
+        {
+
             GetComponent<UnityEngine.AI.NavMeshAgent>().destination = Castle.transform.position;
+        }
+           
     }
     
     void OnTriggerEnter(Collider co) {

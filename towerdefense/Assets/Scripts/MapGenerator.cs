@@ -1,21 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Networking;
 
-public class MapGenerator : MonoBehaviour {
+public class MapGenerator : NetworkBehaviour {
 
     public int width;
     public int height;
     private int[,] map;
     public GameObject BuildPiece;
-    public GameObject spawnPoint1;
-    public GameObject spawnPoint2;
+    public NavMeshSurface nav;
     public int pathsGenerated = 2;
+    [SyncVar]
+    public int seed;
+    public bool generated = false;
+
 
     // Use this for initialization
-    void Awake () {
-        spawnPoint1.transform.position = new Vector3(0, spawnPoint1.transform.position.y, -height / 2);
-        spawnPoint2.transform.position = new Vector3(0, spawnPoint2.transform.position.y, height / 2);
+
+
+    void Start()
+    {
+        if (!isServer)
+        {
+            CmdGenerateSeed(System.DateTime.Now.Millisecond);
+        }
+        
+        Random.InitState(seed);
+        nav = GetComponent<NavMeshSurface>();
         map = new int[width, height];
         for (int i = 0; i < width; i++)
         {
@@ -29,6 +42,9 @@ public class MapGenerator : MonoBehaviour {
             GeneratePath();
         }
         GenerateMap();
+        generated = true;
+
+
 
     }
 	
@@ -36,6 +52,13 @@ public class MapGenerator : MonoBehaviour {
 	void Update () {
 		
 	}
+
+
+    [Command]
+    public void CmdGenerateSeed(int s)
+    {
+        seed = s;
+    }
 
     void GenerateMap()
     {
@@ -45,8 +68,9 @@ public class MapGenerator : MonoBehaviour {
             {
                 if (map[x, z] != 0)
                 {
-                    GameObject piece = (GameObject)Instantiate(BuildPiece, new Vector3(x - width / 2, transform.position.y, z - height / 2), Quaternion.identity);
+                    GameObject piece = (GameObject)Instantiate(BuildPiece, new Vector3(x * (BuildPiece.transform.localScale.x) - (width/2 * BuildPiece.transform.localScale.x), transform.position.y, (z * BuildPiece.transform.localScale.x) - (height / 2 * BuildPiece.transform.localScale.x)), Quaternion.identity);
                     piece.transform.parent = transform;
+                    
                     bool checkBuild = false;
                     for (int i = -1; i < 2; i++)
                     {
@@ -102,7 +126,7 @@ public class MapGenerator : MonoBehaviour {
         bool reachedEnd = false;
         int x = width/2;
         int z = 1;
-        Random.InitState(System.DateTime.Now.Millisecond);
+        
         while (!reachedEnd)
         {
             map[x, z] = 0;

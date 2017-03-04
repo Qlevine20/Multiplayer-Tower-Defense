@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using UnityEngine.AI;
 
 public class Spawn : NetworkBehaviour
 {
@@ -13,10 +14,6 @@ public class Spawn : NetworkBehaviour
     [SyncVar]
     public bool winner = false;
 
-    void Start()
-    {
-
-    }
 
     void Update()
     {
@@ -35,6 +32,8 @@ public class Spawn : NetworkBehaviour
 
         }
     }
+
+
 
 
 
