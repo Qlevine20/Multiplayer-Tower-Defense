@@ -114,6 +114,14 @@ public class PlayerScript : NetworkBehaviour{
         }
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "block" || other.tag == "buildPlace")
+        {
+            Destroy(other.gameObject);
+        }
+    }
+
     [Command]
     public void CmdSpawnMonster()
     {

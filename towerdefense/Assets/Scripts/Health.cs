@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 public class Health : NetworkBehaviour {
     // The TextMesh Component
     public const int maxHealth = 100;
-    private int bars = 10;
+
 
 	[SyncVar]
     private int currBars = 10;
