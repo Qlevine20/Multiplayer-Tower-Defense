@@ -10,6 +10,7 @@ public class Tower : NetworkBehaviour {
     private float counter;
     public float reloadTime = .2f;
     public bool canShoot = false;
+	public AudioClip pewPew;
     
     // Rotation Speed
     public float rotationSpeed = 35;
@@ -31,12 +32,13 @@ public class Tower : NetworkBehaviour {
     void OnTriggerStay(Collider co) {
         // Was it a Monster? Then Shoot it
         if (co.gameObject.tag == "Monster") {
-            Monster m = co.GetComponent<Monster>();
+			Monster m = co.GetComponent<Monster>();
             if(m.Castle == castle && canShoot)
             {
-                canShoot = false;
-                targ = co.transform;
-                CmdShootMonster();
+				canShoot = false;
+				AudioSource.PlayClipAtPoint (pewPew, transform.position, 2.0f);
+				targ = co.transform;
+				CmdShootMonster();
             }
 
         }
