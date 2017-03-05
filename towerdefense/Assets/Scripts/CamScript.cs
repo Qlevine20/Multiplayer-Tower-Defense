@@ -24,35 +24,39 @@ public class CamScript : MonoBehaviour
     }
     public void Update()
     {
+        Vector3 change = transform.position;
+        float c = Time.deltaTime * 10;
+
+        if (cam.transform.position.z > 0)
+        {
+            c = -c;
+        }
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            Vector3 change = new Vector3(transform.position.x, transform.position.y, transform.position.z + Time.deltaTime * 10);
-            transform.position = change;
+            change = new Vector3(transform.position.x, transform.position.y, transform.position.z + c);
+            
         }
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            Vector3 change = new Vector3(transform.position.x - Time.deltaTime * 10, transform.position.y, transform.position.z);
-            transform.position = change;
+            change = new Vector3(transform.position.x - c, transform.position.y, transform.position.z);
         }
 
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            Vector3 change = new Vector3(transform.position.x + Time.deltaTime * 10, transform.position.y, transform.position.z);
-            transform.position = change;
+            change = new Vector3(transform.position.x + c, transform.position.y, transform.position.z);
         }
 
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            Vector3 change = new Vector3(transform.position.x, transform.position.y, transform.position.z - Time.deltaTime * 10);
-            transform.position = change;
+            change = new Vector3(transform.position.x, transform.position.y, transform.position.z - c);
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            transform.position = startPos;
+
             cam.fieldOfView = f;
         }
-
+        transform.position = change;
 
         float fov = cam.fieldOfView;
         fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;

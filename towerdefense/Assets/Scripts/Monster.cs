@@ -7,6 +7,7 @@ public class Monster : MonoBehaviour {
     // Use this for initialization
     public GameObject Castle;
     public int Damage = 5;
+    public GameObject locPoint;
     void Start () {
         // Navigate to Castle
         if (Castle == null)
@@ -20,10 +21,10 @@ public class Monster : MonoBehaviour {
             }
 
         }
-        if (Castle)
+        if (locPoint)
         {
 
-            GetComponent<UnityEngine.AI.NavMeshAgent>().destination = Castle.transform.position;
+            GetComponent<UnityEngine.AI.NavMeshAgent>().destination = locPoint.transform.position;
         }
            
     }
@@ -33,6 +34,10 @@ public class Monster : MonoBehaviour {
         if (co.gameObject == Castle) {
             co.GetComponentInChildren<Health>().TakeDamage();
             NetworkServer.Destroy(gameObject);
+        }
+        if (co.gameObject.tag == "locPoint")
+        {
+            GetComponent<UnityEngine.AI.NavMeshAgent>().destination = Castle.transform.position;
         }
     }
 

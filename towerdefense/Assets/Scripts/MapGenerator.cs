@@ -10,6 +10,7 @@ public class MapGenerator : NetworkBehaviour {
     public int height;
     private int[,] map;
     public GameObject BuildPiece;
+    public GameObject PathLoc;
     public NavMeshSurface nav;
     public int pathsGenerated = 2;
     [SyncVar]
@@ -66,7 +67,12 @@ public class MapGenerator : NetworkBehaviour {
         {
             for (int z = 0; z < height; z++)
             {
-                if (map[x, z] != 0)
+
+                if (map[x, z] == 2)
+                {
+                    GameObject path = (GameObject)Instantiate(PathLoc, new Vector3(x * (BuildPiece.transform.localScale.x) - (width / 2 * BuildPiece.transform.localScale.x), transform.position.y, (z * BuildPiece.transform.localScale.x) - (height / 2 * BuildPiece.transform.localScale.x)), Quaternion.identity);
+                }
+                if (map[x, z] == 1)
                 {
                     GameObject piece = (GameObject)Instantiate(BuildPiece, new Vector3(x * (BuildPiece.transform.localScale.x) - (width/2 * BuildPiece.transform.localScale.x), transform.position.y, (z * BuildPiece.transform.localScale.x) - (height / 2 * BuildPiece.transform.localScale.x)), Quaternion.identity);
                     piece.transform.parent = transform;
@@ -126,10 +132,20 @@ public class MapGenerator : NetworkBehaviour {
         bool reachedEnd = false;
         int x = width/2;
         int z = 1;
-        
+        bool pathLocPlaced = false;
         while (!reachedEnd)
         {
-            map[x, z] = 0;
+            if (z == height/2 && !pathLocPlaced)
+            {
+                Debug.Log("place path");
+                map[x, z] = 2;
+                pathLocPlaced = true;
+            }
+            else
+            {
+                map[x, z] = 0;
+            }
+            
             int xChange = 0;
             int zChange = 0;
             //randomize change in x
@@ -195,6 +211,7 @@ public class MapGenerator : NetworkBehaviour {
 
             z += zChange;
             x += xChange;
+
 
         }
     }

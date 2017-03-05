@@ -11,12 +11,15 @@ public class PlayerScript : NetworkBehaviour{
     private GameObject opponentCastle;
     private GameObject point;
     public GameObject tower;
+    public MapGenerator mapGen;
+    public GameObject[] paths;
     public Text resourcesText;
     private int monsterCost = 3;
     private int towerCost = 15;
     //public bool addResource;
     private bool winner = false;
     public bool lost = false;
+    private bool pathsFound = false;
 
 
     public int resources = 15;
@@ -25,7 +28,7 @@ public class PlayerScript : NetworkBehaviour{
 	void Start () {
         point = transform.GetChild(2).gameObject;
         UpdateResourcesText();
-        if(!isLocalPlayer)
+        if (!isLocalPlayer)
         {
             transform.GetChild(1).gameObject.SetActive(false);
             transform.GetChild(3).gameObject.SetActive(false);
@@ -127,7 +130,19 @@ public class PlayerScript : NetworkBehaviour{
     {
 
         GameObject monster = (GameObject)Instantiate(Monster, point.transform.position, Quaternion.identity);
-        monster.GetComponent<Monster>().Castle = opponentCastle;
+        Monster mon = monster.GetComponent<Monster>();
+        mon.Castle = opponentCastle;
+        if (!mapGen)
+        {
+            mapGen = GameObject.FindGameObjectWithTag("MapGen").GetComponent<MapGenerator>();
+        }
+        if (!pathsFound)
+        {
+            pathsFound = true;
+            paths = GameObject.FindGameObjectsWithTag("locPoint");
+        }
+        Debug.Log(paths.Length);
+        mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated-1)];
         NetworkServer.Spawn(monster);
     }
 
