@@ -6,28 +6,28 @@ using UnityEngine.UI;
 
 public class PlayerScript : NetworkBehaviour{
 
-    public GameObject Monster;
-    public GameObject SpawnManager;
     private GameObject opponentCastle;
     private GameObject point;
+    private int monsterCost = 3;
+    private int towerCost = 15;
+    private bool winner = false;
+    private bool pathsFound = false;
+
+    public GameObject Monster;
+    public GameObject SpawnManager;
     public GameObject tower;
     public MapGenerator mapGen;
     public GameObject[] paths;
     public Text resourcesText;
-    private int monsterCost = 3;
-    private int towerCost = 15;
-    //public bool addResource;
-    private bool winner = false;
     public bool lost = false;
-    private bool pathsFound = false;
-
-
     public int resources = 15;
-    
-	// Use this for initialization
+
 	void Start () {
+
+        //Sets spawn point
         point = transform.GetChild(2).gameObject;
-        UpdateResourcesText();
+
+        //Deactivates other player's camera/resource text
         if (!isLocalPlayer)
         {
             transform.GetChild(1).gameObject.SetActive(false);
@@ -35,64 +35,52 @@ public class PlayerScript : NetworkBehaviour{
             return;
         }
         SpawnManager = (GameObject)Instantiate(SpawnManager, transform.position, Quaternion.identity);
-		StartCoroutine (ResourceRegen());
+
+        //Displays # resources and begins resource regeneration
+        UpdateResourcesText();
+        StartCoroutine(ResourceRegen());
     }
 
     public void Update()
     {
+        //Checks for win/loss state
         if (lost)
-        {
             return;
-        }
+
         if (!isLocalPlayer)
         {
             if (gameObject.GetComponent<Health>().currentHealth == 0)
-            {
                 winner = true;
-            }
             return;
         }
         if (winner)
-        {
             gameObject.transform.GetChild(3).GetChild(2).gameObject.SetActive(true);
-        }
 
-        /*if (addResource)
-        {
-            Debug.Log("adding");
-            addResource = false;
-            AddResources(3);
-        }*/
 
+        //If player presses "S" & has enough resources, spawns monster and subtracts resource cost
         if (Input.GetKeyDown(KeyCode.S))
         {
             if(resources >= monsterCost)
             {
                 if (SpawnManager == null)
-                {
-
                     SpawnManager = (GameObject)Instantiate(SpawnManager, transform.position, Quaternion.identity);
-                }
-                if (SpawnManager != null)
-                {
-                    if (opponentCastle == null)
-                    {
-                        foreach (GameObject g in SpawnManager.GetComponent<Spawn>().playerList)
-                        {
-                            if (g != gameObject)
-                            {
-                                opponentCastle = g;
-                            }
-                        }
-                    }
-                    AddResources(-monsterCost);
-                    CmdSpawnMonster();
-                }
-            }
 
+                else if (opponentCastle == null)
+                {
+                    foreach (GameObject g in SpawnManager.GetComponent<Spawn>().playerList)
+                    {
+                        if (g != gameObject)
+                            opponentCastle = g;
+                    }
+                }
+
+                AddResources(-monsterCost);
+                CmdSpawnMonster();
+
+            }
         }
 
-
+        //If player left clicks & has enough resources, builds a tower and substracts resource cost
         if (Input.GetMouseButtonDown(0))
         {
             if (resources >= towerCost)
@@ -109,10 +97,7 @@ public class PlayerScript : NetworkBehaviour{
                         AddResources(-towerCost);
                         CmdSpawnTower(hit.transform.position + Vector3.up);
                     }
-
-                    //Debug.Log(hit);
                 }
-
             }
         }
     }
@@ -120,18 +105,18 @@ public class PlayerScript : NetworkBehaviour{
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "block" || other.tag == "buildPlace")
-        {
             Destroy(other.gameObject);
-        }
     }
 
     [Command]
     public void CmdSpawnMonster()
     {
-
+        //Instantiates monster & sets castle
         GameObject monster = (GameObject)Instantiate(Monster, point.transform.position, Quaternion.identity);
         Monster mon = monster.GetComponent<Monster>();
         mon.Castle = opponentCastle;
+
+        //Finds mapGen & paths 
         if (!mapGen)
         {
             mapGen = GameObject.FindGameObjectWithTag("MapGen").GetComponent<MapGenerator>();
@@ -141,7 +126,8 @@ public class PlayerScript : NetworkBehaviour{
             pathsFound = true;
             paths = GameObject.FindGameObjectsWithTag("locPoint");
         }
-        Debug.Log(paths.Length);
+
+        //Sets monsters travel location to locPoint
         mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated-1)];
         NetworkServer.Spawn(monster);
     }
@@ -149,7 +135,6 @@ public class PlayerScript : NetworkBehaviour{
     [Command]
     public void CmdSpawnTower(Vector3 pos)
     {
-
         GameObject g = (GameObject)Instantiate(tower,pos,Quaternion.identity);
         g.GetComponent<Tower>().castle = this.gameObject;
         NetworkServer.Spawn(g);
@@ -159,8 +144,6 @@ public class PlayerScript : NetworkBehaviour{
     {
             resources += resource;
             UpdateResourcesText();
-
-        
     }
 
     public void UpdateResourcesText()
@@ -173,9 +156,5 @@ public class PlayerScript : NetworkBehaviour{
 		AddResources (1);
 		StartCoroutine (ResourceRegen());
 	}
-
-
-
-    // Update is called once per frame
 
 }

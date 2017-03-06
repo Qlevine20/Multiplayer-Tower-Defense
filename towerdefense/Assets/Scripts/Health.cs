@@ -3,14 +3,10 @@ using System.Collections;
 using UnityEngine.Networking;
 
 public class Health : NetworkBehaviour {
-    // The TextMesh Component
     public const int maxHealth = 100;
-
 
 	[SyncVar]
     private int currBars = 10;
-    
-    
 
     [SyncVar(hook = "OnChangeHealth")]
     public int currentHealth = maxHealth;
@@ -48,15 +44,17 @@ public class Health : NetworkBehaviour {
 		{
 			tm.text = new string('-', currBars);
 		}
+
 		else
 		{
+            //If monster was killed, player gets resources for monster
 			if (gameObject.tag != "Player")
 			{
-
-				Debug.Log("add");
 				gameObject.GetComponent<Monster> ().Castle.GetComponent<PlayerScript> ().AddResources (2);
 				NetworkServer.Destroy(gameObject);
 			}
+
+            //If player was killed, lose text set to active
 			else
 			{
 				gameObject.transform.GetChild(3).GetChild(3).gameObject.SetActive(true);

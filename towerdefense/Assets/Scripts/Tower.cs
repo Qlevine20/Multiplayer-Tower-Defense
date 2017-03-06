@@ -3,20 +3,21 @@ using System.Collections;
 using UnityEngine.Networking;
 
 public class Tower : NetworkBehaviour {
-    // The Bullet
+    private float counter;
+
     public GameObject bulletPrefab;
     public GameObject castle;
     public Transform targ;
-    private float counter;
+	public AudioClip pewPew;
+
+    public float rotationSpeed = 35;
     public float reloadTime = .2f;
     public bool canShoot = false;
-	public AudioClip pewPew;
-    
-    // Rotation Speed
-    public float rotationSpeed = 35;
-    
+
     void Update() {
         transform.Rotate(Vector3.up * Time.deltaTime * rotationSpeed, Space.World);
+
+        //Updates timer until tower can shoot
         if (!canShoot)
         {
             counter += Time.deltaTime;
@@ -30,8 +31,9 @@ public class Tower : NetworkBehaviour {
     }
     
     void OnTriggerStay(Collider co) {
-        // Was it a Monster? Then Shoot it
-        if (co.gameObject.tag == "Monster") {
+        //If enemy monster enters tower's range, tower shoots 
+        if (co.gameObject.tag == "Monster")
+        {
 			Monster m = co.GetComponent<Monster>();
             if(m.Castle == castle && canShoot)
             {

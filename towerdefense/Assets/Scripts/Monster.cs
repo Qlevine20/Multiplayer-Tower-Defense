@@ -3,46 +3,42 @@ using System.Collections;
 using UnityEngine.Networking;
 
 public class Monster : MonoBehaviour {
-
-    // Use this for initialization
     public GameObject Castle;
-    public int Damage = 5;
     public GameObject locPoint;
+    public int Damage = 5;
+
     void Start () {
-        // Navigate to Castle
+        //Assigns proper castle to monster
         if (Castle == null)
         {
             GameObject[] playerList = GameObject.FindGameObjectsWithTag("Player");
             float farthestCast = (playerList[0].transform.position - transform.position).sqrMagnitude;
             Castle = playerList[0];
+
             if ((playerList[1].transform.position - transform.position).sqrMagnitude > farthestCast)
-            {
                 Castle = playerList[1];
-            }
-
         }
+
+        //Sets the monster's destination to assigned location point
         if (locPoint)
-        {
-
             GetComponent<UnityEngine.AI.NavMeshAgent>().destination = locPoint.transform.position;
-        }
            
     }
     
     void OnTriggerEnter(Collider co) {
-        // If castle then deal Damage, destroy self
+        //Monsters do damage to castle and disappear
         if (co.gameObject == Castle) {
             co.GetComponentInChildren<Health>().TakeDamage();
             NetworkServer.Destroy(gameObject);
         }
+
+        //When location point is reached, monsters new destination is set to castle
         if (co.gameObject.tag == "locPoint")
-        {
             GetComponent<UnityEngine.AI.NavMeshAgent>().destination = Castle.transform.position;
-        }
     }
 
-    void OnTriggerStay(Collider co)
-    {
+    void OnTriggerStay(Collider co){
+        //Attacks monsters that belong to opposite team
         if (co.gameObject.tag == "Monster")
         {
             Monster m = co.gameObject.GetComponent<Monster>();
