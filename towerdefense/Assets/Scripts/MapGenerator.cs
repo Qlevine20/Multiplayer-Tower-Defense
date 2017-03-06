@@ -76,7 +76,8 @@ public class MapGenerator : NetworkBehaviour {
                 {
                     GameObject piece = (GameObject)Instantiate(BuildPiece, new Vector3(x * (BuildPiece.transform.localScale.x) - (width/2 * BuildPiece.transform.localScale.x), transform.position.y, (z * BuildPiece.transform.localScale.x) - (height / 2 * BuildPiece.transform.localScale.x)), Quaternion.identity);
                     piece.transform.parent = transform;
-                    
+                    piece.AddComponent<NavMeshObstacle>();
+                    piece.GetComponent<NavMeshObstacle>().carving = true;
                     bool checkBuild = false;
                     for (int i = -1; i < 2; i++)
                     {
