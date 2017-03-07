@@ -64,4 +64,8 @@ public class Health : NetworkBehaviour {
 		}
 	}
 
+	public int GetHealth() {
+		return currBars;
+	}
+
 }

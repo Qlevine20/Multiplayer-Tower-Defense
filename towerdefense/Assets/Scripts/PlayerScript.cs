@@ -19,6 +19,7 @@ public class PlayerScript : NetworkBehaviour{
     public MapGenerator mapGen;
     public GameObject[] paths;
     public Text resourcesText;
+	public Text tooltip;
     public bool lost = false;
     public int resources = 15;
 
@@ -100,6 +101,18 @@ public class PlayerScript : NetworkBehaviour{
                 }
             }
         }
+
+		// Check for Tooltip display
+		Ray tooltipPointer = Camera.main.ScreenPointToRay (Input.mousePosition);
+		RaycastHit point;
+		if (Physics.Raycast (tooltipPointer, out point)) {
+			Renderer r = point.collider.GetComponent<Renderer> ();
+			if (r != null) {
+				TooltipController (point.collider.gameObject);
+			} else
+				tooltip.text = "";
+		}
+
     }
 
     void OnTriggerEnter(Collider other)
@@ -155,6 +168,21 @@ public class PlayerScript : NetworkBehaviour{
 		yield return new WaitForSeconds (1);
 		AddResources (1);
 		StartCoroutine (ResourceRegen());
+	}
+
+	public void TooltipController(GameObject other) {
+		Vector3 tpos = Input.mousePosition + new Vector3(0, 20, 0);
+		if (other.tag == "Monster") {
+			tooltip.transform.position = tpos;
+			tooltip.text = "Monster\n" + other.GetComponent<Health> ().GetHealth () + "/10";
+		} else if (other.tag == "Tower") {
+			tooltip.transform.position = tpos;
+			tooltip.text = "Tower";// + other.GetComponent<Health> ().GetHealth () + "/10";
+		} else if (other.tag == "Player") {
+			tooltip.transform.position = tpos;
+			tooltip.text = "Player\n" + other.GetComponent<Health> ().GetHealth () + "/10";
+		} else
+			tooltip.text = "";
 	}
 
 }
