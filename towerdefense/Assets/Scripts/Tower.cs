@@ -13,6 +13,11 @@ public class Tower : NetworkBehaviour {
     public float rotationSpeed = 35;
     public float reloadTime = .2f;
     public bool canShoot = false;
+    public bool slowUpgrade = false;
+    public bool rangeUpgrade = false;
+    public int slowUpgradeCost = 5;
+    public int rangeUpgradeCost = 5;
+    public float rangeMultiplier = 2f;
 
     void Update() {
         transform.Rotate(Vector3.up * Time.deltaTime * rotationSpeed, Space.World);
@@ -46,11 +51,35 @@ public class Tower : NetworkBehaviour {
         }
     }
 
+    void OnMouseDown()
+    {
+        if(!slowUpgrade)
+        {
+            if (castle.GetComponent<PlayerScript>().resources >= slowUpgradeCost)
+            {
+                slowUpgrade = true;
+                castle.GetComponent<PlayerScript>().AddResources(-slowUpgradeCost);
+            }
+        }
+
+        else if(!rangeUpgrade)
+        {
+            if (castle.GetComponent<PlayerScript>().resources >= rangeUpgradeCost)
+            {
+                rangeUpgrade = true;
+                castle.GetComponent<PlayerScript>().AddResources(-rangeUpgradeCost);
+                gameObject.GetComponent<SphereCollider>().radius *= rangeMultiplier;
+            }
+        }
+    }
+
     [Command]
     public void CmdShootMonster()
     {
         GameObject g = (GameObject)Instantiate(bulletPrefab, transform.position, Quaternion.identity);
         g.GetComponent<Bullet>().target = targ;
+        if (slowUpgrade)
+            g.GetComponent<Bullet>().slowUpgrade = true;
         NetworkServer.Spawn(g);
     }
 }

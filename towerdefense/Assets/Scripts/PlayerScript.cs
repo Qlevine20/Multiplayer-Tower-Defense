@@ -177,8 +177,8 @@ public class PlayerScript : NetworkBehaviour{
 			tooltip.text = "Monster\n" + other.GetComponent<Health> ().GetHealth () + "/10";
 		} else if (other.tag == "Tower") {
 			tooltip.transform.position = tpos;
-			tooltip.text = "Tower";// + other.GetComponent<Health> ().GetHealth () + "/10";
-		} else if (other.tag == "Player") {
+            tooltip.text = "Tower\n Click to upgrade";
+        } else if (other.tag == "Player") {
 			tooltip.transform.position = tpos;
 			tooltip.text = "Player\n" + other.GetComponent<Health> ().GetHealth () + "/10";
 		} else

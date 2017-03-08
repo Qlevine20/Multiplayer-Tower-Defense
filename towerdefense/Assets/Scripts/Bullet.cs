@@ -4,8 +4,12 @@ using UnityEngine.Networking;
 
 public class Bullet : NetworkBehaviour {
     public float speed = 10;
-    public Transform target;    
-    
+    public Transform target;
+
+    public bool slowUpgrade = false;
+    public float slowChange = 0.4f;
+    private float slowedSpeed = 0;
+
     void FixedUpdate() {    
         //Flies toward target; if no target then bullet is destroyed
         if (target) {
@@ -23,6 +27,12 @@ public class Bullet : NetworkBehaviour {
         if (health)
         {
             health.TakeDamage();
+            if (slowUpgrade)
+            {
+                if (slowedSpeed == 0)
+                    slowedSpeed = co.GetComponent<UnityEngine.AI.NavMeshAgent>().speed * slowChange;
+                co.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = slowedSpeed;
+            }
             NetworkServer.Destroy(gameObject);
         }
     }
