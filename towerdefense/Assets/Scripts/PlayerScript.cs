@@ -9,7 +9,7 @@ public class PlayerScript : NetworkBehaviour{
     private GameObject opponentCastle;
     private GameObject point;
     private int monsterCost = 3;
-    private int towerCost = 15;
+    private int towerCost = 5;
     private bool winner = false;
     private bool pathsFound = false;
 
@@ -177,7 +177,12 @@ public class PlayerScript : NetworkBehaviour{
 			tooltip.text = "Monster\n" + other.GetComponent<Health> ().GetHealth () + "/10";
 		} else if (other.tag == "Tower") {
 			tooltip.transform.position = tpos;
-            tooltip.text = "Tower\n Click to upgrade";
+			string upgrade = other.GetComponent<TowerFunctions> ().GetUpgrade();
+			tooltip.text = upgrade + " Tower\n";
+			if (upgrade == "Basic")
+				tooltip.text += "Upgrade to Slack (5)";
+			if (upgrade == "Slack")
+				tooltip.text += "Upgrade to Longshot (5)";
         } else if (other.tag == "Player") {
 			tooltip.transform.position = tpos;
 			tooltip.text = "Player\n" + other.GetComponent<Health> ().GetHealth () + "/10";

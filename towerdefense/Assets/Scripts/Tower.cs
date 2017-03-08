@@ -82,4 +82,13 @@ public class Tower : NetworkBehaviour {
             g.GetComponent<Bullet>().slowUpgrade = true;
         NetworkServer.Spawn(g);
     }
+
+	public string GetUpgrade() {
+		if (!slowUpgrade)
+			return "Basic";
+		else if (!rangeUpgrade)
+			return "Slack";
+		else
+			return "Longshot";
+	}
 }
