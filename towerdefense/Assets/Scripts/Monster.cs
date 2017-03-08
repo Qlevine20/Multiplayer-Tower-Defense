@@ -7,7 +7,8 @@ public class Monster : MonoBehaviour {
     public GameObject locPoint;
     public int Damage = 5;
 
-    void Start () {
+    void Start()
+    {
         //Assigns proper castle to monster
         if (Castle == null)
         {
@@ -22,9 +23,11 @@ public class Monster : MonoBehaviour {
         //Sets the monster's destination to assigned location point
         if (locPoint)
             GetComponent<UnityEngine.AI.NavMeshAgent>().destination = locPoint.transform.position;
-           
+
+        GetComponent<UnityEngine.AI.NavMeshAgent>().avoidancePriority = 0;
     }
-    
+
+
     void OnTriggerEnter(Collider co) {
         //Monsters do damage to castle and disappear
         if (co.gameObject == Castle) {
