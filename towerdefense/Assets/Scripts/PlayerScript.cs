@@ -29,10 +29,16 @@ public class PlayerScript : NetworkBehaviour{
     public bool lost = false;
     public int resources = 15;
 
+	public Material redPalette;
+	public GameObject model;
+
 	void Start () {
 
         //Sets spawn point
-        point = transform.GetChild(2).gameObject;
+		point = transform.GetChild(2).gameObject;
+
+		if (playerColor == Color.red)
+			model.GetComponent<MeshRenderer> ().material = redPalette;
 
         //Deactivates other player's camera/resource text
         if (!isLocalPlayer)
@@ -130,34 +136,46 @@ public class PlayerScript : NetworkBehaviour{
     [Command]
     public void CmdSpawnMonster()
     {
-        //Instantiates monster & sets castle
-        GameObject monster = (GameObject)Instantiate(Monster, point.transform.position, Quaternion.identity);
-        Monster mon = monster.GetComponent<Monster>();
-        mon.Castle = opponentCastle;
-
-        //Finds mapGen & paths 
-        if (!mapGen)
-        {
-            mapGen = GameObject.FindGameObjectWithTag("MapGen").GetComponent<MapGenerator>();
-        }
-        if (!pathsFound)
-        {
-            pathsFound = true;
-            paths = GameObject.FindGameObjectsWithTag("locPoint");
-        }
-
-        //Sets monsters travel location to locPoint
-        mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated-1)];
-        NetworkServer.Spawn(monster);
+		RpcSpawnMonster ();
     }
+
+	[ClientRpc]
+	public void RpcSpawnMonster() {
+		//Instantiates monster & sets castle
+		GameObject monster = (GameObject)Instantiate(Monster, point.transform.position, Quaternion.identity);
+		Monster mon = monster.GetComponent<Monster>();
+		mon.GetComponent<MeshRenderer> ().material.color = playerColor;
+		mon.Castle = opponentCastle;
+
+		//Finds mapGen & paths 
+		if (!mapGen)
+		{
+			mapGen = GameObject.FindGameObjectWithTag("MapGen").GetComponent<MapGenerator>();
+		}
+		if (!pathsFound)
+		{
+			pathsFound = true;
+			paths = GameObject.FindGameObjectsWithTag("locPoint");
+		}
+
+		//Sets monsters travel location to locPoint
+		mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated-1)];
+		NetworkServer.Spawn(monster);
+	}
 
     [Command]
     public void CmdSpawnTower(Vector3 pos)
     {
-        GameObject g = (GameObject)Instantiate(tower,pos,Quaternion.identity);
-        g.GetComponent<Tower>().castle = this.gameObject;
-        NetworkServer.Spawn(g);
+		RpcSpawnTower (pos);
     }
+
+	[ClientRpc]
+	public void RpcSpawnTower(Vector3 pos) {
+		GameObject g = (GameObject)Instantiate(tower,pos,Quaternion.identity);
+		g.GetComponent<MeshRenderer> ().material.color = playerColor;
+		g.GetComponent<Tower>().castle = this.gameObject;
+		NetworkServer.Spawn(g);
+	}
 
     public void AddResources(int resource)
     {
