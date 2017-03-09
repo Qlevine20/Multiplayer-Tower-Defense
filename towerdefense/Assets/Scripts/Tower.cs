@@ -22,17 +22,7 @@ public class Tower : NetworkBehaviour {
 
     void Start()
     {
-        if (!isServer)
-        {
-            Debug.Log(tColor);
-            if (tColor == Color.black)
-            {
-
-                PlayerScript cas = GetComponent<PlayerScript>();
-                tColor = (cas.playerColor == Color.red ? Color.blue : Color.red);
-            }
             GetComponent<MeshRenderer>().material.color = tColor;
-        }
 
     }
 

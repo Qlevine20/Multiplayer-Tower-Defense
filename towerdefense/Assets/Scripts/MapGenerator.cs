@@ -23,10 +23,10 @@ public class MapGenerator : NetworkBehaviour {
 
     void Start()
     {
-        if (isServer)
-        {
-            RpcGenerateSeed(System.DateTime.Now.Millisecond);
-        }
+        //if (isServer)
+        //{
+        //    RpcGenerateSeed(System.DateTime.Now.Millisecond);
+        //}
         
         Random.InitState(seed);
         nav = GetComponent<NavMeshSurface>();

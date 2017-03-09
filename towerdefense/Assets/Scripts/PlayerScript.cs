@@ -21,8 +21,9 @@ public class PlayerScript : NetworkBehaviour{
 
     public GameObject BlueMonster;
     public GameObject RedMonster;
+    public GameObject RedTower;
+    public GameObject BlueTower;
     public GameObject SpawnManager;
-    public GameObject tower;
     public MapGenerator mapGen;
     public GameObject[] paths;
     public Text resourcesText;
@@ -183,10 +184,10 @@ public class PlayerScript : NetworkBehaviour{
         {
             return;
         }
-		GameObject g = (GameObject)Instantiate(tower,pos,Quaternion.identity);
+
+        GameObject g = (pColor == Color.blue ? (GameObject)Instantiate(BlueTower, pos, Quaternion.identity) : (GameObject)Instantiate(RedTower, pos, Quaternion.identity));
         Tower t = g.GetComponent<Tower>();
         t.castle = this.gameObject;
-        t.tColor = pColor;
         
 		NetworkServer.Spawn(g);
 	}
