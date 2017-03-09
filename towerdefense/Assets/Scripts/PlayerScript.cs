@@ -35,7 +35,6 @@ public class PlayerScript : NetworkBehaviour{
 	void Start () {
 
         //Sets spawn point
-        Debug.Log(playerColor == Color.red);
 		point = transform.GetChild(2).gameObject;
 
 		if (playerColor == Color.red)
@@ -150,7 +149,7 @@ public class PlayerScript : NetworkBehaviour{
 		//Instantiates monster & sets castle
 		GameObject monster = (GameObject)Instantiate(Monster, point.transform.position, Quaternion.identity);
 		Monster mon = monster.GetComponent<Monster>();
-		mon.GetComponent<MeshRenderer>().material.color = pColor;
+        mon.mColor = pColor;
 		mon.Castle = opponentCastle;
 
 		//Finds mapGen & paths 

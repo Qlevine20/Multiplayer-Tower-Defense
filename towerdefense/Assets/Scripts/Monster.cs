@@ -5,10 +5,12 @@ using UnityEngine.Networking;
 public class Monster : MonoBehaviour {
     public GameObject Castle;
     public GameObject locPoint;
+    public Color mColor;
     public int Damage = 5;
 
     void Start()
     {
+        GetComponent<MeshRenderer>().material.color = mColor;
         //Assigns proper castle to monster
         if (Castle == null)
         {
