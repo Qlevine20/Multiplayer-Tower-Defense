@@ -35,10 +35,12 @@ public class PlayerScript : NetworkBehaviour{
 	void Start () {
 
         //Sets spawn point
+        Debug.Log(playerColor == Color.red);
 		point = transform.GetChild(2).gameObject;
 
 		if (playerColor == Color.red)
 			model.GetComponent<MeshRenderer> ().material = redPalette;
+
 
         //Deactivates other player's camera/resource text
         if (!isLocalPlayer)
@@ -88,7 +90,7 @@ public class PlayerScript : NetworkBehaviour{
                 }
 
                 AddResources(-monsterCost);
-                CmdSpawnMonster();
+                CmdSpawnMonster(playerColor);
 
             }
         }
@@ -134,17 +136,21 @@ public class PlayerScript : NetworkBehaviour{
     }
 
     [Command]
-    public void CmdSpawnMonster()
+    public void CmdSpawnMonster(Color pColor)
     {
-		RpcSpawnMonster ();
+		RpcSpawnMonster (pColor);
     }
 
 	[ClientRpc]
-	public void RpcSpawnMonster() {
+	public void RpcSpawnMonster(Color pColor) {
+        if (!isServer)
+        {
+            return;
+        }
 		//Instantiates monster & sets castle
 		GameObject monster = (GameObject)Instantiate(Monster, point.transform.position, Quaternion.identity);
 		Monster mon = monster.GetComponent<Monster>();
-		mon.GetComponent<MeshRenderer> ().material.color = playerColor;
+		mon.GetComponent<MeshRenderer>().material.color = pColor;
 		mon.Castle = opponentCastle;
 
 		//Finds mapGen & paths 
@@ -171,6 +177,10 @@ public class PlayerScript : NetworkBehaviour{
 
 	[ClientRpc]
 	public void RpcSpawnTower(Vector3 pos) {
+        if (!isServer)
+        {
+            return;
+        }
 		GameObject g = (GameObject)Instantiate(tower,pos,Quaternion.identity);
 		g.GetComponent<MeshRenderer> ().material.color = playerColor;
 		g.GetComponent<Tower>().castle = this.gameObject;
