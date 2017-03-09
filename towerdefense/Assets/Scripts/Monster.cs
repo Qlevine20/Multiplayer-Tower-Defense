@@ -37,8 +37,16 @@ public class Monster : NetworkBehaviour {
     void OnTriggerEnter(Collider co) {
         //Monsters do damage to castle and disappear
         if (co.gameObject == Castle) {
-            co.GetComponentInChildren<Health>().TakeDamage(1);
-            NetworkServer.Destroy(gameObject);
+            Health h = co.GetComponentInChildren<Health>();
+            h.TakeDamage(h.currBars - 1);
+            Destroy(gameObject);
+        }
+        if (co.gameObject.tag == "Monster")
+        {
+            if (co.GetComponent<Monster>().Castle != Castle)
+            {
+                Destroy(gameObject);
+            }
         }
 
         //When location point is reached, monsters new destination is set to castle

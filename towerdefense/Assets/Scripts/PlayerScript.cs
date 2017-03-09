@@ -71,7 +71,7 @@ public class PlayerScript : NetworkBehaviour{
             return;
         }
         if (winner)
-            gameObject.transform.GetChild(3).GetChild(2).gameObject.SetActive(true);
+            
 
 
         //If player presses "S" & has enough resources, spawns monster and subtracts resource cost

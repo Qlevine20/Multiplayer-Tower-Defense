@@ -6,7 +6,7 @@ public class Health : NetworkBehaviour {
     public const int maxBars = 10;
 
 	[SyncVar(hook = "TakeDamage")]
-    private int currBars = maxBars;
+    public int currBars = maxBars;
 
     public TextMesh tm;
 
@@ -28,7 +28,16 @@ public class Health : NetworkBehaviour {
         if (currBars <= 0)
         {
             currBars = 0;
-            Destroy(gameObject);
+            if(tag == "Player")
+            {
+                gameObject.transform.GetChild(3).GetChild(3).gameObject.SetActive(true);
+                transform.parent.GetComponent<PlayerScript>().lost = true;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+            
             //You lose code;
         }
     }
