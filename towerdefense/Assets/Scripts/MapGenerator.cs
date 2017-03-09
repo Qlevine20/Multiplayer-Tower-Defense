@@ -88,7 +88,7 @@ public class MapGenerator : NetworkBehaviour {
                                 if (map[x + i, z + j] == 0)
                                 {
                                     piece.tag = "buildPlace";
-                                    piece.GetComponent<Renderer>().material.color = Color.blue;
+                                    piece.GetComponentInChildren<Renderer>().material.color = Color.green;
                                     checkBuild = true;
                                     break;
                                 }
@@ -98,7 +98,7 @@ public class MapGenerator : NetworkBehaviour {
                                 if (map[x + i, z] == 0)
                                 {
                                     piece.tag = "buildPlace";
-                                    piece.GetComponent<Renderer>().material.color = Color.blue;
+                                    piece.GetComponentInChildren<Renderer>().material.color = Color.green;
                                     checkBuild = true;
                                     break;
                                 }
@@ -108,7 +108,7 @@ public class MapGenerator : NetworkBehaviour {
                                 if (map[x, z + j] == 0)
                                 {
                                     piece.tag = "buildPlace";
-                                    piece.GetComponent<Renderer>().material.color = Color.blue;
+                                    piece.GetComponentInChildren<Renderer>().material.color = Color.green;
                                     checkBuild = true;
                                     break;
                                 }
