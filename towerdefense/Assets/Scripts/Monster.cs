@@ -37,7 +37,7 @@ public class Monster : NetworkBehaviour {
     void OnTriggerEnter(Collider co) {
         //Monsters do damage to castle and disappear
         if (co.gameObject == Castle) {
-            co.GetComponentInChildren<Health>().TakeDamage();
+            co.GetComponentInChildren<Health>().TakeDamage(1);
             NetworkServer.Destroy(gameObject);
         }
 
@@ -53,7 +53,7 @@ public class Monster : NetworkBehaviour {
             Monster m = co.gameObject.GetComponent<Monster>();
             if (m.Castle != Castle)
             {
-                co.GetComponent<Health>().TakeDamage();
+                co.GetComponent<Health>().TakeDamage(1);
             }
         }
     }

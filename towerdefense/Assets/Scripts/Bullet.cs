@@ -10,8 +10,13 @@ public class Bullet : NetworkBehaviour {
     public float slowChange = 0.4f;
     private float slowedSpeed = 0;
 
-    void FixedUpdate() {    
+    void FixedUpdate() {
         //Flies toward target; if no target then bullet is destroyed
+
+        if (!isServer)
+        {
+            return;
+        }
         if (target) {
             Vector3 dir = target.position - transform.position;
             GetComponent<Rigidbody>().velocity = dir.normalized * speed;
@@ -23,17 +28,27 @@ public class Bullet : NetworkBehaviour {
     
     void OnTriggerEnter(Collider co) {
         //Does damage to enemies
-        Health health = co.GetComponentInChildren<Health>();
-        if (health)
+        if(co.tag == "Monster")
         {
-            health.TakeDamage();
-            if (slowUpgrade)
+            if (isServer)
             {
-                if (slowedSpeed == 0)
-                    slowedSpeed = co.GetComponent<UnityEngine.AI.NavMeshAgent>().speed * slowChange;
-                co.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = slowedSpeed;
+                Health health = co.GetComponentInChildren<Health>();
+                if (health)
+                {
+                    health.ApplyDamage(1);
+                    if (slowUpgrade)
+                    {
+                        if (slowedSpeed == 0)
+                            slowedSpeed = co.GetComponent<UnityEngine.AI.NavMeshAgent>().speed * slowChange;
+                        co.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = slowedSpeed;
+                    }
+
+                }
             }
-            NetworkServer.Destroy(gameObject);
+
+            Destroy(gameObject);
+
         }
+
     }
 }

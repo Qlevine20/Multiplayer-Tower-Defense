@@ -60,24 +60,28 @@ public class Tower : NetworkBehaviour {
 
     void OnMouseDown()
     {
-        if(!slowUpgrade)
+        if (castle)
         {
-            if (castle.GetComponent<PlayerScript>().resources >= slowUpgradeCost)
+            if (!slowUpgrade)
             {
-                slowUpgrade = true;
-                castle.GetComponent<PlayerScript>().AddResources(-slowUpgradeCost);
+                if (castle.GetComponent<PlayerScript>().resources >= slowUpgradeCost)
+                {
+                    slowUpgrade = true;
+                    castle.GetComponent<PlayerScript>().AddResources(-slowUpgradeCost);
+                }
+            }
+
+            else if (!rangeUpgrade)
+            {
+                if (castle.GetComponent<PlayerScript>().resources >= rangeUpgradeCost)
+                {
+                    rangeUpgrade = true;
+                    castle.GetComponent<PlayerScript>().AddResources(-rangeUpgradeCost);
+                    gameObject.GetComponent<SphereCollider>().radius *= rangeMultiplier;
+                }
             }
         }
 
-        else if(!rangeUpgrade)
-        {
-            if (castle.GetComponent<PlayerScript>().resources >= rangeUpgradeCost)
-            {
-                rangeUpgrade = true;
-                castle.GetComponent<PlayerScript>().AddResources(-rangeUpgradeCost);
-                gameObject.GetComponent<SphereCollider>().radius *= rangeMultiplier;
-            }
-        }
     }
 
     [Command]

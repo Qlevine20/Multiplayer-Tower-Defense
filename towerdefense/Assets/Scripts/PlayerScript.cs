@@ -66,7 +66,7 @@ public class PlayerScript : NetworkBehaviour{
 
         if (!isLocalPlayer)
         {
-            if (gameObject.GetComponent<Health>().currentHealth == 0)
+            if (gameObject.GetComponent<Health>().GetHealth() == 0)
                 winner = true;
             return;
         }
