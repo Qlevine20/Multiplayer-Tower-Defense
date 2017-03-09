@@ -10,6 +10,7 @@ public class Tower : NetworkBehaviour {
     public Transform targ;
 	public AudioClip pewPew;
 
+    public Color tColor;
     public float rotationSpeed = 35;
     public float reloadTime = .2f;
     public bool canShoot = false;
@@ -18,6 +19,22 @@ public class Tower : NetworkBehaviour {
     public int slowUpgradeCost = 5;
     public int rangeUpgradeCost = 5;
     public float rangeMultiplier = 2f;
+
+    void Start()
+    {
+        if (!isServer)
+        {
+            Debug.Log(tColor);
+            if (tColor == Color.black)
+            {
+
+                PlayerScript cas = GetComponent<PlayerScript>();
+                tColor = (cas.playerColor == Color.red ? Color.blue : Color.red);
+            }
+            GetComponent<MeshRenderer>().material.color = tColor;
+        }
+
+    }
 
     void Update() {
         transform.Rotate(Vector3.up * Time.deltaTime * rotationSpeed, Space.World);

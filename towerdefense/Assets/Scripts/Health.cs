@@ -26,7 +26,11 @@ public class Health : NetworkBehaviour {
     }
 
     void OnChangeHealth(int currentHealth)
-	{   
+	{
+        if (!isLocalPlayer)
+        {
+            return;
+        }
 		CmdOnChangeBars ();
     }
 

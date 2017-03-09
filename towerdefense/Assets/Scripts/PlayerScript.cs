@@ -19,7 +19,8 @@ public class PlayerScript : NetworkBehaviour{
     private bool winner = false;
     private bool pathsFound = false;
 
-    public GameObject Monster;
+    public GameObject BlueMonster;
+    public GameObject RedMonster;
     public GameObject SpawnManager;
     public GameObject tower;
     public MapGenerator mapGen;
@@ -28,6 +29,7 @@ public class PlayerScript : NetworkBehaviour{
 	public Text tooltip;
     public bool lost = false;
     public int resources = 15;
+    private GameObject currMonster;
 
 	public Material redPalette;
 	public GameObject model;
@@ -109,7 +111,7 @@ public class PlayerScript : NetworkBehaviour{
                     if (r != null && hit.collider.gameObject.tag == "buildPlace")
                     {
                         AddResources(-towerCost);
-                        CmdSpawnTower(hit.transform.position + Vector3.up);
+                        CmdSpawnTower(hit.transform.position + Vector3.up, playerColor);
                     }
                 }
             }
@@ -137,52 +139,55 @@ public class PlayerScript : NetworkBehaviour{
     [Command]
     public void CmdSpawnMonster(Color pColor)
     {
+        
 		RpcSpawnMonster (pColor);
     }
 
 	[ClientRpc]
 	public void RpcSpawnMonster(Color pColor) {
-        if (!isServer)
+        if (isServer)
         {
-            return;
+            //Instantiates monster & sets castle
+            
+            GameObject monster = (pColor == Color.blue?(GameObject)Instantiate(BlueMonster, point.transform.position, Quaternion.identity) : (GameObject)Instantiate(RedMonster, point.transform.position, Quaternion.identity));
+            Monster mon = monster.GetComponent<Monster>();
+            mon.Castle = opponentCastle;
+
+            //Finds mapGen & paths 
+            if (!mapGen)
+            {
+                mapGen = GameObject.FindGameObjectWithTag("MapGen").GetComponent<MapGenerator>();
+            }
+            if (!pathsFound)
+            {
+                pathsFound = true;
+                paths = GameObject.FindGameObjectsWithTag("locPoint");
+            }
+
+            //Sets monsters travel location to locPoint
+            mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated - 1)];
+            NetworkServer.Spawn(monster);
         }
-		//Instantiates monster & sets castle
-		GameObject monster = (GameObject)Instantiate(Monster, point.transform.position, Quaternion.identity);
-		Monster mon = monster.GetComponent<Monster>();
-        mon.mColor = pColor;
-		mon.Castle = opponentCastle;
 
-		//Finds mapGen & paths 
-		if (!mapGen)
-		{
-			mapGen = GameObject.FindGameObjectWithTag("MapGen").GetComponent<MapGenerator>();
-		}
-		if (!pathsFound)
-		{
-			pathsFound = true;
-			paths = GameObject.FindGameObjectsWithTag("locPoint");
-		}
-
-		//Sets monsters travel location to locPoint
-		mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated-1)];
-		NetworkServer.Spawn(monster);
 	}
 
     [Command]
-    public void CmdSpawnTower(Vector3 pos)
+    public void CmdSpawnTower(Vector3 pos, Color pColor)
     {
-		RpcSpawnTower (pos);
+		RpcSpawnTower (pos, pColor);
     }
 
 	[ClientRpc]
-	public void RpcSpawnTower(Vector3 pos) {
+	public void RpcSpawnTower(Vector3 pos, Color pColor) {
         if (!isServer)
         {
             return;
         }
 		GameObject g = (GameObject)Instantiate(tower,pos,Quaternion.identity);
-		g.GetComponent<MeshRenderer> ().material.color = playerColor;
-		g.GetComponent<Tower>().castle = this.gameObject;
+        Tower t = g.GetComponent<Tower>();
+        t.castle = this.gameObject;
+        t.tColor = pColor;
+        
 		NetworkServer.Spawn(g);
 	}
 

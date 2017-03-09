@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class Monster : MonoBehaviour {
+public class Monster : NetworkBehaviour {
     public GameObject Castle;
     public GameObject locPoint;
     public Color mColor;
@@ -10,8 +10,7 @@ public class Monster : MonoBehaviour {
 
     void Start()
     {
-        GetComponent<MeshRenderer>().material.color = mColor;
-        //Assigns proper castle to monster
+
         if (Castle == null)
         {
             GameObject[] playerList = GameObject.FindGameObjectsWithTag("Player");
@@ -21,6 +20,11 @@ public class Monster : MonoBehaviour {
             if ((playerList[1].transform.position - transform.position).sqrMagnitude > farthestCast)
                 Castle = playerList[1];
         }
+
+        GetComponent<MeshRenderer>().material.color = mColor;
+
+        //Assigns proper castle to monster
+
 
         //Sets the monster's destination to assigned location point
         if (locPoint)

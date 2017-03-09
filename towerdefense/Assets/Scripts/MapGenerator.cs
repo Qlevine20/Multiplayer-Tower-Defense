@@ -23,9 +23,9 @@ public class MapGenerator : NetworkBehaviour {
 
     void Start()
     {
-        if (!isServer)
+        if (isServer)
         {
-            CmdGenerateSeed(System.DateTime.Now.Millisecond);
+            RpcGenerateSeed(System.DateTime.Now.Millisecond);
         }
         
         Random.InitState(seed);
@@ -55,8 +55,8 @@ public class MapGenerator : NetworkBehaviour {
 	}
 
 
-    [Command]
-    public void CmdGenerateSeed(int s)
+    [ClientRpc]
+    public void RpcGenerateSeed(int s)
     {
         seed = s;
     }
