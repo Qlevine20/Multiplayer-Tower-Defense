@@ -6,6 +6,12 @@ using UnityEngine.UI;
 
 public class PlayerScript : NetworkBehaviour{
 
+	[SyncVar]
+	public string playerName;
+
+	[SyncVar]
+	public Color playerColor;
+
     private GameObject opponentCastle;
     private GameObject point;
     private int monsterCost = 3;
@@ -185,7 +191,7 @@ public class PlayerScript : NetworkBehaviour{
 				tooltip.text += "Upgrade to Longshot (5)";
         } else if (other.tag == "Player") {
 			tooltip.transform.position = tpos;
-			tooltip.text = "Player\n" + other.GetComponent<Health> ().GetHealth () + "/10";
+			tooltip.text = other.GetComponent<PlayerScript>().playerName + "\n" + other.GetComponent<Health> ().GetHealth () + "/10";
 		} else
 			tooltip.text = "";
 	}
