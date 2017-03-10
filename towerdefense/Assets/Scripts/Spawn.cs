@@ -11,7 +11,7 @@ public class Spawn : NetworkBehaviour
     private bool allPlayers = false;
 
 
-    [SyncVar]
+    //[SyncVar]
     public bool winner = false;
 
 

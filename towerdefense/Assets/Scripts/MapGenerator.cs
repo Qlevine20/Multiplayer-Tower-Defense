@@ -70,7 +70,7 @@ public class MapGenerator : NetworkBehaviour {
 
                 if (map[x, z] == 2)
                 {
-                    GameObject path = (GameObject)Instantiate(PathLoc, new Vector3(x * (BuildPiece.transform.localScale.x) - (width / 2 * BuildPiece.transform.localScale.x), transform.position.y, (z * BuildPiece.transform.localScale.x) - (height / 2 * BuildPiece.transform.localScale.x)), Quaternion.identity);
+                    Instantiate(PathLoc, new Vector3(x * (BuildPiece.transform.localScale.x) - (width / 2 * BuildPiece.transform.localScale.x), transform.position.y, (z * BuildPiece.transform.localScale.x) - (height / 2 * BuildPiece.transform.localScale.x)), Quaternion.identity);
                 }
                 if (map[x, z] == 1)
                 {
@@ -138,7 +138,6 @@ public class MapGenerator : NetworkBehaviour {
         {
             if (z == height/2 && !pathLocPlaced)
             {
-                Debug.Log("place path");
                 map[x, z] = 2;
                 pathLocPlaced = true;
             }

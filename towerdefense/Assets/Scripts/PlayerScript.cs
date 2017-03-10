@@ -61,8 +61,6 @@ public class PlayerScript : NetworkBehaviour{
     public void Update()
     {
         //Checks for win/loss state
-        if (lost)
-            return;
 
         if (!isLocalPlayer)
         {
@@ -70,8 +68,9 @@ public class PlayerScript : NetworkBehaviour{
                 winner = true;
             return;
         }
-        if (winner)
-            
+
+        if (lost)
+            return;
 
 
         //If player presses "S" & has enough resources, spawns monster and subtracts resource cost
@@ -108,11 +107,39 @@ public class PlayerScript : NetworkBehaviour{
 
                 if (Physics.Raycast(ray, out hit))
                 {
-                    Renderer r = hit.collider.GetComponent<Renderer>();
-                    if (r != null && hit.collider.gameObject.tag == "buildPlace")
+                    if (hit.collider.gameObject.tag == "buildPlace")
                     {
                         AddResources(-towerCost);
                         CmdSpawnTower(hit.transform.position + Vector3.up, playerColor);
+                        hit.collider.gameObject.tag = "block";
+                    }
+
+                    if (hit.collider.gameObject.tag == "toolTip")
+                    {
+                        Tower t = hit.collider.gameObject.transform.parent.GetComponent<Tower>();
+                        if (t.castle == this.gameObject)
+                        {
+                            if (!t.slowUpgrade && resources >= t.slowUpgradeCost)
+                            {
+                                if (isLocalPlayer)
+                                {
+                                     t.UpgradeTowerSlow(this);
+                                    //t.CmdChangeLocalScale(1.5f);
+                                }
+                               
+                                
+                            }
+
+                            else if (!t.rangeUpgrade && resources >= t.rangeUpgradeCost)
+                            {
+
+                                t.UpgradeTowerRange(this);
+                                
+                                //t.CmdChangeLocalScale(1.5f);
+                                
+
+                            }
+                        }
                     }
                 }
             }
@@ -175,11 +202,11 @@ public class PlayerScript : NetworkBehaviour{
     [Command]
     public void CmdSpawnTower(Vector3 pos, Color pColor)
     {
-		RpcSpawnTower (pos, pColor);
+		RpcSpawnTower (pos, pColor, this.gameObject);
     }
 
 	[ClientRpc]
-	public void RpcSpawnTower(Vector3 pos, Color pColor) {
+	public void RpcSpawnTower(Vector3 pos, Color pColor, GameObject player) {
         if (!isServer)
         {
             return;
@@ -187,9 +214,9 @@ public class PlayerScript : NetworkBehaviour{
 
         GameObject g = (pColor == Color.blue ? (GameObject)Instantiate(BlueTower, pos, Quaternion.identity) : (GameObject)Instantiate(RedTower, pos, Quaternion.identity));
         Tower t = g.GetComponent<Tower>();
-        t.castle = this.gameObject;
-        
-		NetworkServer.Spawn(g);
+        t.castle = player;
+
+        NetworkServer.Spawn(g);
 	}
 
     public void AddResources(int resource)
@@ -214,7 +241,7 @@ public class PlayerScript : NetworkBehaviour{
 		if (other.tag == "Monster") {
 			tooltip.transform.position = tpos;
 			tooltip.text = "Monster\n" + other.GetComponent<Health> ().GetHealth () + "/10";
-		} else if (other.tag == "Tower") {
+		} else if (other.tag == "toolTip") {
 			tooltip.transform.position = tpos;
 			string upgrade = other.GetComponent<TowerFunctions> ().GetUpgrade();
 			tooltip.text = upgrade + " Tower\n";

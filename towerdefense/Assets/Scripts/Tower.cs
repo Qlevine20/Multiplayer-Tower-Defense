@@ -9,8 +9,11 @@ public class Tower : NetworkBehaviour {
     public GameObject castle;
     public Transform targ;
 	public AudioClip pewPew;
+    public bool red = false;
 
-    public Color tColor;
+    [SyncVar(hook = "OnChangeLocalScale")]
+    public float locScale = 1;
+
     public float rotationSpeed = 35;
     public float reloadTime = .2f;
     public bool canShoot = false;
@@ -20,13 +23,26 @@ public class Tower : NetworkBehaviour {
     public int rangeUpgradeCost = 5;
     public float rangeMultiplier = 2f;
 
-    void Start()
-    {
-            GetComponent<MeshRenderer>().material.color = tColor;
 
-    }
 
     void Update() {
+
+        if (!castle)
+        {
+            foreach (GameObject c in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                if (c.GetComponent<PlayerScript>().playerColor == Color.red && red)
+                {
+                    castle = c;
+                    break;
+                }
+                else if (c.GetComponent<PlayerScript>().playerColor == Color.blue && !red)
+                {
+                    castle = c;
+                    break;
+                }
+            }
+        }
         transform.Rotate(Vector3.up * Time.deltaTime * rotationSpeed, Space.World);
 
         //Updates timer until tower can shoot
@@ -58,31 +74,7 @@ public class Tower : NetworkBehaviour {
         }
     }
 
-    void OnMouseDown()
-    {
-        if (castle)
-        {
-            if (!slowUpgrade)
-            {
-                if (castle.GetComponent<PlayerScript>().resources >= slowUpgradeCost)
-                {
-                    slowUpgrade = true;
-                    castle.GetComponent<PlayerScript>().AddResources(-slowUpgradeCost);
-                }
-            }
 
-            else if (!rangeUpgrade)
-            {
-                if (castle.GetComponent<PlayerScript>().resources >= rangeUpgradeCost)
-                {
-                    rangeUpgrade = true;
-                    castle.GetComponent<PlayerScript>().AddResources(-rangeUpgradeCost);
-                    gameObject.GetComponent<SphereCollider>().radius *= rangeMultiplier;
-                }
-            }
-        }
-
-    }
 
     [Command]
     public void CmdShootMonster()
@@ -102,4 +94,43 @@ public class Tower : NetworkBehaviour {
 		else
 			return "Longshot";
 	}
+
+    [Command]
+    public void CmdChangeLocalScale(float s)
+    {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
+        RpcChangeLocalScale(s);
+        
+        
+    }
+
+    [ClientRpc]
+    public void RpcChangeLocalScale(float s)
+    {
+        transform.localScale *= s;
+    }
+
+
+    public void OnChangeLocalScale(float s)
+    {
+        transform.localScale *= s;
+        
+    }
+
+
+    public void UpgradeTowerSlow(PlayerScript p)
+    {
+        slowUpgrade = true;
+        p.AddResources(-slowUpgradeCost);
+    }
+
+    public void UpgradeTowerRange(PlayerScript p)
+    {
+        rangeUpgrade = true;
+        p.AddResources(-rangeUpgradeCost);
+        gameObject.GetComponent<SphereCollider>().radius *= rangeMultiplier;
+    }
 }
