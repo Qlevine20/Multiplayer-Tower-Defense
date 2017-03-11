@@ -9,9 +9,11 @@ public class MapGenerator : NetworkBehaviour {
     public int width;
     public int height;
     private int[,] map;
+    private int[,] controlMap;
     public GameObject BuildPiece;
     public GameObject PathLoc;
     public NavMeshSurface nav;
+    public GameObject ControlPoint;
     public int pathsGenerated = 2;
     [SyncVar]
     public int seed;
@@ -31,6 +33,7 @@ public class MapGenerator : NetworkBehaviour {
         Random.InitState(seed);
         nav = GetComponent<NavMeshSurface>();
         map = new int[width, height];
+        controlMap = new int[8, 8];
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
@@ -63,6 +66,8 @@ public class MapGenerator : NetworkBehaviour {
 
     void GenerateMap()
     {
+
+        GenerateControlPoints();
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)
@@ -70,10 +75,12 @@ public class MapGenerator : NetworkBehaviour {
 
                 if (map[x, z] == 2)
                 {
+                    //loc point
                     Instantiate(PathLoc, new Vector3(x * (BuildPiece.transform.localScale.x) - (width / 2 * BuildPiece.transform.localScale.x), transform.position.y, (z * BuildPiece.transform.localScale.x) - (height / 2 * BuildPiece.transform.localScale.x)), Quaternion.identity);
                 }
                 if (map[x, z] == 1)
                 {
+                    //instantiate block
                     GameObject piece = (GameObject)Instantiate(BuildPiece, new Vector3(x * (BuildPiece.transform.localScale.x) - (width/2 * BuildPiece.transform.localScale.x), transform.position.y, (z * BuildPiece.transform.localScale.x) - (height / 2 * BuildPiece.transform.localScale.x)), Quaternion.identity);
                     piece.transform.parent = transform;
                     piece.AddComponent<NavMeshObstacle>();
@@ -85,6 +92,7 @@ public class MapGenerator : NetworkBehaviour {
                         {
                             if (x + i < width && z + j < height && x + i > 0 && z + j > 0)
                             {
+                                //check if next to path
                                 if (map[x + i, z + j] == 0)
                                 {
                                     piece.tag = "buildPlace";
@@ -124,6 +132,9 @@ public class MapGenerator : NetworkBehaviour {
                 }
             }
         }
+
+
+        
     }
 
 
@@ -215,4 +226,111 @@ public class MapGenerator : NetworkBehaviour {
 
         }
     }
+
+
+    Vector3 MapConverter(Vector3 mapCoord)
+    {
+        return new Vector3(mapCoord.x * BuildPiece.transform.localScale.x, mapCoord.y, mapCoord.z * BuildPiece.transform.localScale.z);
+    }
+
+
+
+    void GenerateControlPoints()
+    {
+        for(int x = width/2 + 1; x < width/2 + 5; x++)
+        {
+            for(int z = -3; z < 4; z++)
+            {
+                if(z != 0 && z != -1 && z != 1)
+                {
+                    GameObject piece = (GameObject)Instantiate(BuildPiece, MapConverter(new Vector3(x,transform.position.y,z)), Quaternion.identity);
+                    piece.transform.parent = transform;
+                    piece.AddComponent<NavMeshObstacle>();
+                    piece.GetComponent<NavMeshObstacle>().carving = true;
+                }
+                else
+                {
+                    if(x == width / 2 + 4)
+                    {
+                        GameObject piece = (GameObject)Instantiate(BuildPiece, MapConverter(new Vector3(x, transform.position.y, z)), Quaternion.identity);
+                        piece.transform.parent = transform;
+                        piece.AddComponent<NavMeshObstacle>();
+                        piece.GetComponent<NavMeshObstacle>().carving = true;
+                    }
+                }
+
+            }
+        }
+
+
+        GameObject controlPoint1 = (GameObject)(Instantiate(ControlPoint, MapConverter(new Vector3(width/2 + 2, transform.position.y, 0)), Quaternion.identity));
+
+        for (int x = -width / 2 - 4; x < -width / 2; x++)
+        {
+            for (int z = -3; z < 4; z++)
+            {
+                if (z != 0 && z != -1 && z != 1)
+                {
+                    GameObject piece = (GameObject)Instantiate(BuildPiece, MapConverter(new Vector3(x, transform.position.y, z)), Quaternion.identity);
+                    piece.transform.parent = transform;
+                    piece.AddComponent<NavMeshObstacle>();
+                    piece.GetComponent<NavMeshObstacle>().carving = true;
+                }
+                else
+                {
+                    if(x == -width / 2 - 4)
+                    {
+                        GameObject piece = (GameObject)Instantiate(BuildPiece, MapConverter(new Vector3(x, transform.position.y, z)), Quaternion.identity);
+                        piece.transform.parent = transform;
+                        piece.AddComponent<NavMeshObstacle>();
+                        piece.GetComponent<NavMeshObstacle>().carving = true;
+                    }
+                }
+            }
+        }
+
+
+
+        GameObject controlPoint2 = (GameObject)(Instantiate(ControlPoint, MapConverter(new Vector3(-width/2 - 2, transform.position.y, 0)), Quaternion.identity));
+
+
+
+        int x1 = 0;
+        while (true)
+        {
+            Debug.Log("Called");
+            Vector3 pos = MapConverter(new Vector3(x1, transform.position.y, height / 2));
+            Debug.DrawRay(pos, new Vector3(0,10,0), Color.black);
+            if (map[x1,height/2] == 0)
+            {
+                break;
+            }
+            map[x1, height / 2] = 0;
+            x1 += 1;
+            
+
+        }
+
+
+        int x2 = width - 1;
+        while (true)
+        {
+            Debug.Log("Second Called");
+            Vector3 pos = MapConverter(new Vector3(x1, transform.position.y, height / 2));
+            Debug.DrawRay(pos, new Vector3(0,10,0), Color.black);
+            if (map[x2, height/2] == 0)
+            {
+                break;
+            }
+            map[x2, height / 2] = 0;
+            x2 -= 1;
+            
+
+        }
+    }
+
+
+
+
+    
 }

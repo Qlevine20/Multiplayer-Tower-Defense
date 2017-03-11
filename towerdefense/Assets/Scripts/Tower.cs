@@ -11,8 +11,6 @@ public class Tower : NetworkBehaviour {
 	public AudioClip pewPew;
     public bool red = false;
 
-    [SyncVar(hook = "OnChangeLocalScale")]
-    public float locScale = 1;
 
     public float rotationSpeed = 35;
     public float reloadTime = .2f;
@@ -94,31 +92,6 @@ public class Tower : NetworkBehaviour {
 		else
 			return "Longshot";
 	}
-
-    [Command]
-    public void CmdChangeLocalScale(float s)
-    {
-        if (!isLocalPlayer)
-        {
-            return;
-        }
-        RpcChangeLocalScale(s);
-        
-        
-    }
-
-    [ClientRpc]
-    public void RpcChangeLocalScale(float s)
-    {
-        transform.localScale *= s;
-    }
-
-
-    public void OnChangeLocalScale(float s)
-    {
-        transform.localScale *= s;
-        
-    }
 
 
     public void UpgradeTowerSlow(PlayerScript p)

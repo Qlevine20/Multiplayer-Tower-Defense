@@ -124,7 +124,7 @@ public class PlayerScript : NetworkBehaviour{
                                 if (isLocalPlayer)
                                 {
                                      t.UpgradeTowerSlow(this);
-                                    //t.CmdChangeLocalScale(1.5f);
+                                    CmdChangeScale(t.gameObject, 1.5f);
                                 }
                                
                                 
@@ -134,7 +134,7 @@ public class PlayerScript : NetworkBehaviour{
                             {
 
                                 t.UpgradeTowerRange(this);
-                                
+                                CmdChangeScale(t.gameObject,1.5f);
                                 //t.CmdChangeLocalScale(1.5f);
                                 
 
@@ -162,6 +162,21 @@ public class PlayerScript : NetworkBehaviour{
     {
         if (other.tag == "block" || other.tag == "buildPlace")
             Destroy(other.gameObject);
+    }
+
+    [Command]
+    public void CmdChangeScale(GameObject t, float s)
+    {
+        NetworkIdentity netId =  t.GetComponent<NetworkIdentity>();
+        netId.AssignClientAuthority(connectionToClient);
+        RpcChangeScale(t, s);
+        netId.RemoveClientAuthority(connectionToClient);
+    }
+
+    [ClientRpc]
+    public void RpcChangeScale(GameObject t, float s)
+    {
+        t.transform.localScale *= s;
     }
 
     [Command]
