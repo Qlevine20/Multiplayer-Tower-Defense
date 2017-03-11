@@ -208,7 +208,7 @@ public class PlayerScript : NetworkBehaviour{
             }
 
             //Sets monsters travel location to locPoint
-            mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated - 1)];
+            mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated - 1 + 2)];
             NetworkServer.Spawn(monster);
         }
 

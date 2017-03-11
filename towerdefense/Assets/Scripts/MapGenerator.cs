@@ -264,6 +264,7 @@ public class MapGenerator : NetworkBehaviour {
 
 
         GameObject controlPoint1 = (GameObject)(Instantiate(ControlPoint, MapConverter(new Vector3(width/2 + 2, transform.position.y, 0)), Quaternion.identity));
+        Instantiate(PathLoc, MapConverter(new Vector3(width / 2 + 2, transform.position.y, 0)), Quaternion.identity);
 
         for (int x = -width / 2 - 4; x < -width / 2; x++)
         {
@@ -292,15 +293,12 @@ public class MapGenerator : NetworkBehaviour {
 
 
         GameObject controlPoint2 = (GameObject)(Instantiate(ControlPoint, MapConverter(new Vector3(-width/2 - 2, transform.position.y, 0)), Quaternion.identity));
-
+        Instantiate(PathLoc, MapConverter(new Vector3(-width / 2 - 2, transform.position.y, 0)), Quaternion.identity);
 
 
         int x1 = 0;
         while (true)
         {
-            Debug.Log("Called");
-            Vector3 pos = MapConverter(new Vector3(x1, transform.position.y, height / 2));
-            Debug.DrawRay(pos, new Vector3(0,10,0), Color.black);
             if (map[x1,height/2] == 0)
             {
                 break;
@@ -315,9 +313,6 @@ public class MapGenerator : NetworkBehaviour {
         int x2 = width - 1;
         while (true)
         {
-            Debug.Log("Second Called");
-            Vector3 pos = MapConverter(new Vector3(x1, transform.position.y, height / 2));
-            Debug.DrawRay(pos, new Vector3(0,10,0), Color.black);
             if (map[x2, height/2] == 0)
             {
                 break;
