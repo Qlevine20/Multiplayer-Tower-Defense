@@ -19,6 +19,7 @@ public class PlayerScript : NetworkBehaviour{
     private int towerCost = 5;
     private bool winner = false;
     private bool pathsFound = false;
+    private bool cpFound = false;
     private GameObject selectedMonster;
 
     public GameObject BlueMonster;
@@ -28,6 +29,7 @@ public class PlayerScript : NetworkBehaviour{
     public GameObject SpawnManager;
     public MapGenerator mapGen;
     public GameObject[] paths;
+    public GameObject[] controlPoints;
     public Text resourcesText;
 	public Text tooltip;
     public bool lost = false;
@@ -98,6 +100,26 @@ public class PlayerScript : NetworkBehaviour{
             }
         }
 
+        if(Input.GetMouseButtonDown(1))
+        {
+            Ray ray;
+            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (!cpFound)
+            {
+                cpFound = true;
+                controlPoints = GameObject.FindGameObjectsWithTag("ControlPoint");
+            }
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.gameObject.tag == "Monster" && hit.collider.gameObject.GetComponent<Monster>().Castle == opponentCastle)
+                {
+                    CmdChangeMonsterDestination(hit.collider.gameObject, controlPoints[Random.Range(0, 2)].transform.position);
+                }
+            }
+        }
         //If player left clicks & has enough resources, builds a tower and substracts resource cost
         if (Input.GetMouseButtonDown(0))
         {
@@ -293,11 +315,10 @@ public class PlayerScript : NetworkBehaviour{
         if (other.tag == "Monster")
         {
             tooltip.transform.position = tpos;
-            tooltip.text = "Monster\n" + other.GetComponent<Health>().GetHealth() + "/10\n";
+            tooltip.text = "Monster\n" + other.GetComponent<Health>().GetHealth() + "/10\n Right click to send to control point \n";
         }
         else if (other.tag == "toolTip")
         {
-            Debug.Log("HOVERIN OVER TOOLTIP");
             tooltip.transform.position = tpos;
             string upgrade = other.GetComponent<TowerFunctions>().GetUpgrade();
             tooltip.text = upgrade + " Tower\n";
