@@ -34,7 +34,7 @@ public class Health : NetworkBehaviour {
                 transform.parent.GetComponent<PlayerScript>().lost = true;
             }
             else
-            {
+			{
                 Destroy(gameObject);
             }
             

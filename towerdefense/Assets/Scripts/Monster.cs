@@ -7,6 +7,8 @@ public class Monster : NetworkBehaviour {
     public GameObject locPoint;
     public Color mColor;
     public int Damage = 5;
+	public AudioClip deathS;
+	public AudioClip sockemS;
 
     void Start()
     {
@@ -37,14 +39,16 @@ public class Monster : NetworkBehaviour {
     void OnTriggerEnter(Collider co) {
         //Monsters do damage to castle and disappear
         if (co.gameObject == Castle) {
+			AudioSource.PlayClipAtPoint (sockemS, transform.position, 5.0f);
             Health h = co.GetComponentInChildren<Health>();
             h.TakeDamage(h.currBars - 1);
             Destroy(gameObject);
         }
         if (co.gameObject.tag == "Monster")
-        {
+		{
             if (co.GetComponent<Monster>().Castle != Castle)
-            {
+			{
+				AudioSource.PlayClipAtPoint (deathS, transform.position, 5.0f);
                 Destroy(gameObject);
             }
         }

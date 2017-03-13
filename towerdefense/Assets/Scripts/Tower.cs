@@ -64,7 +64,7 @@ public class Tower : NetworkBehaviour {
             if(m.Castle == castle && canShoot)
             {
 				canShoot = false;
-				AudioSource.PlayClipAtPoint (pewPew, transform.position, 2.0f);
+				AudioSource.PlayClipAtPoint (pewPew, transform.position, 5.0f);
 				targ = co.transform;
 				CmdShootMonster();
             }
