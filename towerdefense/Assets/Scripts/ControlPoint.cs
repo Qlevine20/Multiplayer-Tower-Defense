@@ -8,20 +8,25 @@ public class ControlPoint : NetworkBehaviour {
     public GameObject redPoint;
     public Color red;
     public Color blue;
-    public Color pointOwner;
+    public Color pointOwner = Color.black;
+
     private float controlTime = 5f;
     private float blueCounter;
     private float redCounter;
+
+    private GameObject[] players;
     //public string owner = "neutral";
 
 	// Use this for initialization
 	void Start () {
-		
+        players = GameObject.FindGameObjectsWithTag("Player");
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	}
+        if (players == null)
+            players = GameObject.FindGameObjectsWithTag("Player");
+    }
 
     void OnTriggerStay(Collider other)
     {
@@ -33,10 +38,20 @@ public class ControlPoint : NetworkBehaviour {
                 blueCounter += Time.deltaTime;
                 if (redCounter != 0)
                     redCounter -= Time.deltaTime;
-                if(blueCounter >= controlTime && blueCounter >= redCounter)
-                {
+                if(pointOwner == Color.black || pointOwner == Color.red)
+                    if(blueCounter >= controlTime && blueCounter >= redCounter)
+                    {
                     GetComponentInChildren<MeshRenderer>().sharedMaterial = bluePoint.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+                    foreach(GameObject player in players)
+                    {
+                        if (player.GetComponent<PlayerScript>().playerColor == Color.blue)
+                            player.GetComponent<PlayerScript>().capturedPoints += 1;
+                        else if(player.GetComponent<PlayerScript>().playerColor == Color.red && pointOwner == red)
+                            player.GetComponent<PlayerScript>().capturedPoints -= 1;
+                    }
+   
                     pointOwner = blue;
+
                 }
             }
 
@@ -45,9 +60,18 @@ public class ControlPoint : NetworkBehaviour {
                 redCounter += Time.deltaTime;
                 if (blueCounter != 0)
                     blueCounter -= Time.deltaTime;
-                if(redCounter >= controlTime && redCounter >= blueCounter)
-                {
+                if(pointOwner == Color.black || pointOwner == Color.red)
+                    if(redCounter >= controlTime && redCounter >= blueCounter)
+                    {
                     GetComponentInChildren<MeshRenderer>().sharedMaterial = redPoint.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+                    foreach (GameObject player in players)
+                    {
+                        if (player.GetComponent<PlayerScript>().playerColor == Color.blue)
+                            player.GetComponent<PlayerScript>().capturedPoints -= 1;
+                        else if (player.GetComponent<PlayerScript>().playerColor == Color.red && pointOwner == red)
+                            player.GetComponent<PlayerScript>().capturedPoints += 1;
+                    }
+
                     pointOwner = red;
                 }
             }

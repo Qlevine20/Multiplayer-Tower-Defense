@@ -35,7 +35,7 @@ public class PlayerScript : NetworkBehaviour{
 
 	public Material redPalette;
 	public GameObject model;
-
+    public int capturedPoints;
 	void Start () {
 
         //Sets spawn point
@@ -255,7 +255,7 @@ public class PlayerScript : NetworkBehaviour{
 
     public void AddResources(int resource)
     {
-            resources += resource;
+            resources += capturedPoints + resource;
             UpdateResourcesText();
     }
 
