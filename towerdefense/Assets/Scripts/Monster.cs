@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 public class Monster : NetworkBehaviour {
     public GameObject Castle;
     public GameObject locPoint;
+    public TextMesh cp;
     public Color mColor;
     public int Damage = 5;
 	public AudioClip deathS;
@@ -72,7 +73,11 @@ public class Monster : NetworkBehaviour {
         if(co.gameObject.tag == "ControlPoint")
         {
             if(co.gameObject.GetComponent<ControlPoint>().pointOwner == mColor)
+            {
                 GetComponent<UnityEngine.AI.NavMeshAgent>().destination = Castle.transform.position;
+                cp.fontSize = 0;
+            }
+                
 
         }
     }

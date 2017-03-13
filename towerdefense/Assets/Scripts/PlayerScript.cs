@@ -117,6 +117,7 @@ public class PlayerScript : NetworkBehaviour{
                 if (hit.collider.gameObject.tag == "Monster" && hit.collider.gameObject.GetComponent<Monster>().Castle == opponentCastle)
                 {
                     CmdChangeMonsterDestination(hit.collider.gameObject, controlPoints[Random.Range(0, 2)].transform.position);
+                    hit.collider.gameObject.GetComponent<Monster>().cp.fontSize = 200;
                 }
             }
         }
