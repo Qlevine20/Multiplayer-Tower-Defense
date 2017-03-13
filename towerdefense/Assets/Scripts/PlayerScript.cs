@@ -106,7 +106,7 @@ public class PlayerScript : NetworkBehaviour{
 
                 if (Physics.Raycast(ray, out hit))
                 {
-                    if (hit.collider.gameObject.tag == "Monster")
+                if (hit.collider.gameObject.tag == "Monster" && hit.collider.gameObject.GetComponent<Monster>().Castle  == opponentCastle)
                     {
                         if (selectedMonster != null)
                         {
