@@ -8,7 +8,11 @@ public class ControlPoint : NetworkBehaviour {
     public GameObject redPoint;
     public Color red;
     public Color blue;
-
+    public Color pointOwner;
+    private float controlTime = 5f;
+    private float blueCounter;
+    private float redCounter;
+    //public string owner = "neutral";
 
 	// Use this for initialization
 	void Start () {
@@ -19,15 +23,35 @@ public class ControlPoint : NetworkBehaviour {
 	void Update () {
 	}
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerStay(Collider other)
     {
         if (other.tag == "Monster")
         {
             
             if (other.gameObject.GetComponent<Monster>().mColor == blue)
-                GetComponentInChildren<MeshRenderer>().sharedMaterial = bluePoint.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+            {
+                blueCounter += Time.deltaTime;
+                if (redCounter != 0)
+                    redCounter -= Time.deltaTime;
+                if(blueCounter >= controlTime && blueCounter >= redCounter)
+                {
+                    GetComponentInChildren<MeshRenderer>().sharedMaterial = bluePoint.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+                    pointOwner = blue;
+                }
+            }
+
             else if (other.gameObject.GetComponent<Monster>().mColor == red)
-                GetComponentInChildren<MeshRenderer>().sharedMaterial = redPoint.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+            {
+                redCounter += Time.deltaTime;
+                if (blueCounter != 0)
+                    blueCounter -= Time.deltaTime;
+                if(redCounter >= controlTime && redCounter >= blueCounter)
+                {
+                    GetComponentInChildren<MeshRenderer>().sharedMaterial = redPoint.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+                    pointOwner = red;
+                }
+            }
+
 
         }
     }

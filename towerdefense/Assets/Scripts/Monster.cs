@@ -64,5 +64,12 @@ public class Monster : NetworkBehaviour {
                 co.GetComponent<Health>().TakeDamage(1);
             }
         }
+
+        if(co.gameObject.tag == "ControlPoint")
+        {
+            if(co.gameObject.GetComponent<ControlPoint>().pointOwner == mColor)
+                GetComponent<UnityEngine.AI.NavMeshAgent>().destination = Castle.transform.position;
+
+        }
     }
 }
