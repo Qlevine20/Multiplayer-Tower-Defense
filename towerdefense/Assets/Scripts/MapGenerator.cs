@@ -73,6 +73,7 @@ public class MapGenerator : NetworkBehaviour {
             for (int z = 0; z < height; z++)
             {
 
+
                 if (map[x, z] == 2)
                 {
                     //loc point
@@ -264,7 +265,8 @@ public class MapGenerator : NetworkBehaviour {
 
 
         GameObject controlPoint1 = (GameObject)(Instantiate(ControlPoint, MapConverter(new Vector3(width/2 + 2, transform.position.y, 0)), Quaternion.identity));
-        Instantiate(PathLoc, MapConverter(new Vector3(width / 2 + 2, transform.position.y, 0)), Quaternion.identity);
+        controlPoint1.tag = "ControlPoint";
+        //Instantiate(PathLoc, MapConverter(new Vector3(width / 2 + 2, transform.position.y, 0)), Quaternion.identity);
 
         for (int x = -width / 2 - 4; x < -width / 2; x++)
         {
@@ -276,6 +278,7 @@ public class MapGenerator : NetworkBehaviour {
                     piece.transform.parent = transform;
                     piece.AddComponent<NavMeshObstacle>();
                     piece.GetComponent<NavMeshObstacle>().carving = true;
+
                 }
                 else
                 {
@@ -293,7 +296,8 @@ public class MapGenerator : NetworkBehaviour {
 
 
         GameObject controlPoint2 = (GameObject)(Instantiate(ControlPoint, MapConverter(new Vector3(-width/2 - 2, transform.position.y, 0)), Quaternion.identity));
-        Instantiate(PathLoc, MapConverter(new Vector3(-width / 2 - 2, transform.position.y, 0)), Quaternion.identity);
+        controlPoint2.tag = "ControlPoint";
+       // Instantiate(PathLoc, MapConverter(new Vector3(-width / 2 - 2, transform.position.y, 0)), Quaternion.identity);
 
 
         int x1 = 0;

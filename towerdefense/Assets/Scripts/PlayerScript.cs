@@ -18,6 +18,7 @@ public class PlayerScript : NetworkBehaviour{
     private int towerCost = 5;
     private bool winner = false;
     private bool pathsFound = false;
+    private GameObject selectedMonster;
 
     public GameObject BlueMonster;
     public GameObject RedMonster;
@@ -99,19 +100,27 @@ public class PlayerScript : NetworkBehaviour{
         //If player left clicks & has enough resources, builds a tower and substracts resource cost
         if (Input.GetMouseButtonDown(0))
         {
-            if (resources >= towerCost)
-            {
                 Ray ray;
                 ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
 
                 if (Physics.Raycast(ray, out hit))
                 {
+                    if (hit.collider.gameObject.tag == "Monster")
+                        selectedMonster = hit.collider.gameObject;
+
+                    if (hit.collider.gameObject.tag == "ControlPoint")
+                        selectedMonster.GetComponent<UnityEngine.AI.NavMeshAgent>().destination = hit.collider.gameObject.transform.position;
+ 
                     if (hit.collider.gameObject.tag == "buildPlace")
                     {
-                        AddResources(-towerCost);
-                        CmdSpawnTower(hit.transform.position + Vector3.up, playerColor);
-                        hit.collider.gameObject.tag = "block";
+                        if(resources >= towerCost)
+                        {
+                            AddResources(-towerCost);
+                            CmdSpawnTower(hit.transform.position + Vector3.up, playerColor);
+                            hit.collider.gameObject.tag = "block";
+                        }
+
                     }
 
                     if (hit.collider.gameObject.tag == "toolTip")
@@ -142,7 +151,7 @@ public class PlayerScript : NetworkBehaviour{
                         }
                     }
                 }
-            }
+            
         }
 
 		// Check for Tooltip display
@@ -153,8 +162,17 @@ public class PlayerScript : NetworkBehaviour{
 			if (r != null) {
 				TooltipController (point.collider.gameObject);
 			} else
-				tooltip.text = "";
-		}
+            {
+                if (selectedMonster == null)
+                    tooltip.text = "";
+                else
+                {
+                    TooltipController(selectedMonster);
+                }
+
+            }
+                
+        }
 
     }
 
@@ -208,7 +226,7 @@ public class PlayerScript : NetworkBehaviour{
             }
 
             //Sets monsters travel location to locPoint
-            mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated - 1 + 2)];
+            mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated - 1)];
             NetworkServer.Spawn(monster);
         }
 
@@ -254,9 +272,13 @@ public class PlayerScript : NetworkBehaviour{
 	public void TooltipController(GameObject other) {
 		Vector3 tpos = Input.mousePosition + new Vector3(0, 20, 0);
 		if (other.tag == "Monster") {
-			tooltip.transform.position = tpos;
-			tooltip.text = "Monster\n" + other.GetComponent<Health> ().GetHealth () + "/10";
-		} else if (other.tag == "toolTip") {
+            tooltip.transform.position = tpos; 
+			tooltip.text = "Monster\n" + other.GetComponent<Health> ().GetHealth () + "/10\n";
+		}else if (other.tag == "ControlPoint")
+        {
+            tooltip.text = " CLICK TO SEND SELECTED MONSTER";
+        }
+        else if (other.tag == "toolTip") {
 			tooltip.transform.position = tpos;
 			string upgrade = other.GetComponent<TowerFunctions> ().GetUpgrade();
 			tooltip.text = upgrade + " Tower\n";
@@ -266,8 +288,15 @@ public class PlayerScript : NetworkBehaviour{
 				tooltip.text += "Upgrade to Longshot (5)";
         } else if (other.tag == "Player") {
 			tooltip.transform.position = tpos;
-			tooltip.text = other.GetComponent<PlayerScript>().playerName + "\n" + other.GetComponent<Health> ().GetHealth () + "/10";
-		} else
+            tooltip.text = other.GetComponent<PlayerScript>().playerName + "\n" + other.GetComponent<Health> ().GetHealth () + "/10";
+		}else if (other.tag == "buildPlace"){
+            tooltip.transform.position = tpos;
+            tooltip.text = "Click to build a tower (" + towerCost + ")";// (5)";
+          
+
+
+        }
+        else
 			tooltip.text = "";
 	}
 
