@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.AI;
 
 public class PlayerScript : NetworkBehaviour{
 
@@ -118,8 +119,9 @@ public class PlayerScript : NetworkBehaviour{
                     }
             
 
-                    if (hit.collider.gameObject.tag == "ControlPoint")
-                        selectedMonster.GetComponent<UnityEngine.AI.NavMeshAgent>().destination = hit.collider.gameObject.transform.position;
+                    if (hit.collider.gameObject.tag == "ControlPoint" && selectedMonster)
+                    CmdChangeMonsterDestination(selectedMonster, hit.collider.gameObject.transform.position);
+                        
  
                     if (hit.collider.gameObject.tag == "buildPlace")
                     {
@@ -153,13 +155,17 @@ public class PlayerScript : NetworkBehaviour{
 
                                 t.UpgradeTowerRange(this);
                                 CmdChangeScale(t.gameObject,1.5f);
-                                //t.CmdChangeLocalScale(1.5f);
                                 
 
                             }
                         }
                     }
+
                 }
+            else
+            {
+                selectedMonster = null;
+            }
             
         }
 
@@ -203,6 +209,18 @@ public class PlayerScript : NetworkBehaviour{
     {
         
 		RpcSpawnMonster (pColor);
+    }
+
+    [Command]
+    public void CmdChangeMonsterDestination(GameObject m, Vector3 dest)
+    {
+        RpcChangeMonsterDestination(m, dest);
+    }
+
+    [ClientRpc]
+    public void RpcChangeMonsterDestination(GameObject m, Vector3 dest)
+    {
+        m.GetComponent<NavMeshAgent>().destination = dest;
     }
 
 	[ClientRpc]
