@@ -107,7 +107,16 @@ public class PlayerScript : NetworkBehaviour{
                 if (Physics.Raycast(ray, out hit))
                 {
                     if (hit.collider.gameObject.tag == "Monster")
+                    {
+                        if (selectedMonster != null)
+                        {
+                            selectedMonster.GetComponent<Health>().tm.fontSize /= 4;
+                        }   
                         selectedMonster = hit.collider.gameObject;
+                        selectedMonster.GetComponent<Health>().tm.fontSize *= 4;
+                    selectedMonster.GetComponent<Health>().tm.color = Color.cyan;
+                    }
+            
 
                     if (hit.collider.gameObject.tag == "ControlPoint")
                         selectedMonster.GetComponent<UnityEngine.AI.NavMeshAgent>().destination = hit.collider.gameObject.transform.position;
@@ -162,15 +171,7 @@ public class PlayerScript : NetworkBehaviour{
 			if (r != null) {
 				TooltipController (point.collider.gameObject);
 			} else
-            {
-                if (selectedMonster == null)
                     tooltip.text = "";
-                else
-                {
-                    TooltipController(selectedMonster);
-                }
-
-            }
                 
         }
 
@@ -271,33 +272,40 @@ public class PlayerScript : NetworkBehaviour{
 
 	public void TooltipController(GameObject other) {
 		Vector3 tpos = Input.mousePosition + new Vector3(0, 20, 0);
-		if (other.tag == "Monster") {
-            tooltip.transform.position = tpos; 
-			tooltip.text = "Monster\n" + other.GetComponent<Health> ().GetHealth () + "/10\n";
-		}else if (other.tag == "ControlPoint")
+        if (other.tag == "Monster")
+        {
+            tooltip.transform.position = tpos;
+            tooltip.text = "Monster\n" + other.GetComponent<Health>().GetHealth() + "/10\n";
+        }
+        else if (other.tag == "toolTip")
+        {
+            Debug.Log("HOVERIN OVER TOOLTIP");
+            tooltip.transform.position = tpos;
+            string upgrade = other.GetComponent<TowerFunctions>().GetUpgrade();
+            tooltip.text = upgrade + " Tower\n";
+            if (upgrade == "Basic")
+                tooltip.text += "Upgrade to Slack (5)";
+            if (upgrade == "Slack")
+                tooltip.text += "Upgrade to Longshot (5)";
+        }
+        else if (other.tag == "Player")
+        {
+            tooltip.transform.position = tpos;
+            tooltip.text = other.GetComponent<PlayerScript>().playerName + "\n" + other.GetComponent<Health>().GetHealth() + "/10";
+        }
+        else if (other.tag == "buildPlace")
+        {
+            tooltip.transform.position = tpos;
+            tooltip.text = "Click to build a tower (" + towerCost + ")";
+        }
+        else if (other.tag == "ControlPoint")
         {
             tooltip.text = " CLICK TO SEND SELECTED MONSTER";
         }
-        else if (other.tag == "toolTip") {
-			tooltip.transform.position = tpos;
-			string upgrade = other.GetComponent<TowerFunctions> ().GetUpgrade();
-			tooltip.text = upgrade + " Tower\n";
-			if (upgrade == "Basic")
-				tooltip.text += "Upgrade to Slack (5)";
-			if (upgrade == "Slack")
-				tooltip.text += "Upgrade to Longshot (5)";
-        } else if (other.tag == "Player") {
-			tooltip.transform.position = tpos;
-            tooltip.text = other.GetComponent<PlayerScript>().playerName + "\n" + other.GetComponent<Health> ().GetHealth () + "/10";
-		}else if (other.tag == "buildPlace"){
-            tooltip.transform.position = tpos;
-            tooltip.text = "Click to build a tower (" + towerCost + ")";// (5)";
-          
 
 
-        }
         else
-			tooltip.text = "";
+            tooltip.text = "";
 	}
 
 }
