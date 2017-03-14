@@ -34,6 +34,7 @@ public class PlayerScript : NetworkBehaviour{
 	public Text tooltip;
     public bool lost = false;
     public int resources = 15;
+    public LayerMask toolTipMask;
     private GameObject currMonster;
 
 	public Material redPalette;
@@ -167,7 +168,7 @@ public class PlayerScript : NetworkBehaviour{
                                 if (isLocalPlayer)
                                 {
                                      t.UpgradeTowerSlow(this);
-                                    CmdChangeScale(t.gameObject, 1.5f);
+                                    CmdChangeTowerScale(t.gameObject, 1.5f);
                                 }
                                
                                 
@@ -177,7 +178,7 @@ public class PlayerScript : NetworkBehaviour{
                             {
 
                                 t.UpgradeTowerRange(this);
-                                CmdChangeScale(t.gameObject,1.5f);
+                                CmdChangeTowerScale(t.gameObject,1.5f);
                                 
 
                             }
@@ -195,7 +196,7 @@ public class PlayerScript : NetworkBehaviour{
 		// Check for Tooltip display
 		Ray tooltipPointer = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit point;
-		if (Physics.Raycast (tooltipPointer, out point)) {
+		if (Physics.Raycast (tooltipPointer, out point,toolTipMask)) {
 			Renderer r = point.collider.GetComponent<Renderer> ();
 			if (r != null) {
 				TooltipController (point.collider.gameObject);
@@ -213,17 +214,18 @@ public class PlayerScript : NetworkBehaviour{
     }
 
     [Command]
-    public void CmdChangeScale(GameObject t, float s)
+    public void CmdChangeTowerScale(GameObject t, float s)
     {
         NetworkIdentity netId =  t.GetComponent<NetworkIdentity>();
         netId.AssignClientAuthority(connectionToClient);
-        RpcChangeScale(t, s);
+        RpcChangeTowerScale(t, s);
         netId.RemoveClientAuthority(connectionToClient);
     }
 
     [ClientRpc]
-    public void RpcChangeScale(GameObject t, float s)
+    public void RpcChangeTowerScale(GameObject t, float s)
     {
+        t.transform.GetChild(2).gameObject.SetActive(false);
         t.transform.localScale *= s;
     }
 

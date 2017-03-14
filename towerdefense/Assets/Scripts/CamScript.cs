@@ -56,12 +56,12 @@ public class CamScript : MonoBehaviour
             change = new Vector3(transform.position.x, transform.position.y, transform.position.z + c);
             
         }
-        if (Input.GetKey(KeyCode.LeftArrow) && transform.localPosition.x > -mg.width / 2)
+        if (Input.GetKey(KeyCode.LeftArrow) && transform.localPosition.x + 30 > -mg.width / 2)
         {
             change = new Vector3(transform.position.x - c, transform.position.y, transform.position.z);
         }
 
-        if (Input.GetKey(KeyCode.RightArrow) && transform.localPosition.x < (mg.width / 2))
+        if (Input.GetKey(KeyCode.RightArrow) && transform.localPosition.x - 30 < (mg.width / 2))
         {
             change = new Vector3(transform.position.x + c, transform.position.y, transform.position.z);
         }
