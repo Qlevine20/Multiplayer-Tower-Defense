@@ -23,6 +23,7 @@ public class PlayerScript : NetworkBehaviour{
     private bool pathsFound = false;
     private bool cpFound = false;
     private GameObject selectedMonster;
+    private GameObject controlPointSpawn;
 
     public GameObject BlueMonster;
     public GameObject RedMonster;
@@ -81,24 +82,7 @@ public class PlayerScript : NetworkBehaviour{
         //If player presses "S" & has enough resources, spawns monster and subtracts resource cost
         if (Input.GetKeyDown(KeyCode.S))
         {
-            if(resources >= monsterCost)
-            {
-                if (SpawnManager == null)
-                    SpawnManager = (GameObject)Instantiate(SpawnManager, transform.position, Quaternion.identity);
-
-                else if (opponentCastle == null)
-                {
-                    foreach (GameObject g in SpawnManager.GetComponent<Spawn>().playerList)
-                    {
-                        if (g != gameObject)
-                            opponentCastle = g;
-                    }
-                }
-
-                AddResources(-monsterCost);
-                CmdSpawnMonster(playerColor);
-
-            }
+            SpawnMonster();
         }
 
         if(Input.GetMouseButtonDown(1))
@@ -115,9 +99,21 @@ public class PlayerScript : NetworkBehaviour{
 
             if (Physics.Raycast(ray, out hit))
             {
-                if (hit.collider.gameObject.tag == "Monster" && hit.collider.gameObject.GetComponent<Monster>().Castle == opponentCastle)
+                //if (hit.collider.gameObject.tag == "Monster" && hit.collider.gameObject.GetComponent<Monster>().Castle == opponentCastle)
+                //{
+                //    CmdChangeMonsterDestination(hit.collider.gameObject, controlPoints[Random.Range(0, 2)].transform.position);
+                //    hit.collider.gameObject.GetComponent<Monster>().cp.fontSize = 200;
+                //}
+
+                if (hit.collider.gameObject.tag == "ControlPoint" && selectedMonster == null)
                 {
-                    CmdChangeMonsterDestination(hit.collider.gameObject, controlPoints[Random.Range(0, 2)].transform.position);
+                    controlPointSpawn = hit.collider.gameObject;
+                    SpawnMonster();
+                }
+
+                if (hit.collider.gameObject.tag == "ControlPoint" && selectedMonster != null)
+                {
+                    CmdChangeMonsterDestination(selectedMonster, hit.collider.gameObject.transform.position);
                     hit.collider.gameObject.GetComponent<Monster>().cp.fontSize = 200;
                 }
             }
@@ -131,65 +127,61 @@ public class PlayerScript : NetworkBehaviour{
 
                 if (Physics.Raycast(ray, out hit))
                 {
-                if (hit.collider.gameObject.tag == "Monster" && hit.collider.gameObject.GetComponent<Monster>().Castle  == opponentCastle)
-                    {
-                        if (selectedMonster != null)
-                        {
-                            selectedMonster.GetComponent<Health>().tm.fontSize /= 4;
-                        }   
-                        selectedMonster = hit.collider.gameObject;
-                        selectedMonster.GetComponent<Health>().tm.fontSize *= 4;
+                if (hit.collider.gameObject.tag == "Monster" && hit.collider.gameObject.GetComponent<Monster>().Castle == opponentCastle)
+                {
+                    if (selectedMonster != null)
+                        selectedMonster.GetComponent<Health>().tm.fontSize /= 4;
+                    selectedMonster = hit.collider.gameObject;
+                    selectedMonster.GetComponent<Health>().tm.fontSize *= 4;
                     selectedMonster.GetComponent<Health>().tm.color = Color.cyan;
-                    }
-            
+                }
 
-                    if (hit.collider.gameObject.tag == "ControlPoint" && selectedMonster)
-                    CmdChangeMonsterDestination(selectedMonster, hit.collider.gameObject.transform.position);
-                        
- 
-                    if (hit.collider.gameObject.tag == "buildPlace")
+                else if (hit.collider.gameObject.tag == "buildPlace")
+                {
+                    if (resources >= towerCost)
                     {
-                        if(resources >= towerCost)
-                        {
-                            AddResources(-towerCost);
-                            CmdSpawnTower(hit.transform.position + Vector3.up, playerColor);
-                            hit.collider.gameObject.tag = "block";
-                        }
-
-                    }
-
-                    if (hit.collider.gameObject.tag == "toolTip")
-                    {
-                        Tower t = hit.collider.gameObject.transform.parent.GetComponent<Tower>();
-                        if (t.castle == this.gameObject)
-                        {
-                            if (!t.slowUpgrade && resources >= t.slowUpgradeCost)
-                            {
-                                if (isLocalPlayer)
-                                {
-                                     t.UpgradeTowerSlow(this);
-                                    CmdChangeTowerScale(t.gameObject, 1.5f);
-                                }
-                               
-                                
-                            }
-
-                            else if (!t.rangeUpgrade && resources >= t.rangeUpgradeCost)
-                            {
-
-                                t.UpgradeTowerRange(this);
-                                CmdChangeTowerScale(t.gameObject,1.5f);
-                                
-
-                            }
-                        }
+                        AddResources(-towerCost);
+                        CmdSpawnTower(hit.transform.position + Vector3.up, playerColor);
+                        hit.collider.gameObject.tag = "block";
                     }
 
                 }
-            else
-            {
-                selectedMonster = null;
-            }
+
+                else if (hit.collider.gameObject.tag == "toolTip")
+                {
+                    Tower t = hit.collider.gameObject.transform.parent.GetComponent<Tower>();
+                    if (t.castle == this.gameObject)
+                    {
+                        if (!t.slowUpgrade && resources >= t.slowUpgradeCost)
+                        {
+                            if (isLocalPlayer)
+                            {
+                                t.UpgradeTowerSlow(this);
+                                CmdChangeTowerScale(t.gameObject, 1.5f);
+                            }
+
+
+                        }
+
+                        else if (!t.rangeUpgrade && resources >= t.rangeUpgradeCost)
+                        {
+
+                            t.UpgradeTowerRange(this);
+                            CmdChangeTowerScale(t.gameObject, 1.5f);
+
+
+                        }
+                    }
+                }
+
+                else
+                {
+                    selectedMonster.GetComponent<Health>().tm.fontSize /= 4;
+                    selectedMonster = null;
+                }
+
+
+                }
             
         }
 
@@ -270,7 +262,15 @@ public class PlayerScript : NetworkBehaviour{
             }
 
             //Sets monsters travel location to locPoint
-            mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated - 1)];
+            if (controlPointSpawn == null)
+                mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated - 1)];
+            else
+            {
+                mon.locPoint = controlPointSpawn;
+                mon.cp.fontSize = 200;
+                controlPointSpawn = null;
+            }
+
             NetworkServer.Spawn(monster);
         }
 
@@ -305,6 +305,28 @@ public class PlayerScript : NetworkBehaviour{
     public void UpdateResourcesText()
     {
         resourcesText.text = "RESOURCES: " + resources.ToString();
+    }
+
+    public void SpawnMonster()
+    {
+        if (resources >= monsterCost)
+        {
+            if (SpawnManager == null)
+                SpawnManager = (GameObject)Instantiate(SpawnManager, transform.position, Quaternion.identity);
+
+            else if (opponentCastle == null)
+            {
+                foreach (GameObject g in SpawnManager.GetComponent<Spawn>().playerList)
+                {
+                    if (g != gameObject)
+                        opponentCastle = g;
+                }
+            }
+
+            AddResources(-monsterCost);
+            CmdSpawnMonster(playerColor);
+
+        }
     }
 
 	public IEnumerator ResourceRegen() {
@@ -342,7 +364,7 @@ public class PlayerScript : NetworkBehaviour{
         }
         else if (other.tag == "ControlPoint")
         {
-            tooltip.text = " CLICK TO SEND SELECTED MONSTER";
+            tooltip.text = "RIGHT CLICK TO SEND SELECTED MONSTER";
         }
 
 
