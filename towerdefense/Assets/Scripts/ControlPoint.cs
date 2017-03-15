@@ -68,9 +68,9 @@ public class ControlPoint : NetworkBehaviour
                         GetComponentInChildren<MeshRenderer>().sharedMaterial = redPoint.GetComponentInChildren<MeshRenderer>().sharedMaterial;
                         foreach (GameObject player in players)
                         {
-                            if (player.GetComponent<PlayerScript>().playerColor == Color.blue)
+                            if (player.GetComponent<PlayerScript>().playerColor == Color.blue && pointOwner == blue)
                                 player.GetComponent<PlayerScript>().capturedPoints -= 1;
-                            else if (player.GetComponent<PlayerScript>().playerColor == Color.red && pointOwner == blue)
+                            else if (player.GetComponent<PlayerScript>().playerColor == Color.red)
                                 player.GetComponent<PlayerScript>().capturedPoints += 1;
                         }
 
