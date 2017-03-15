@@ -49,7 +49,7 @@ public class Monster : NetworkBehaviour {
 		{
             if (co.GetComponent<Monster>().Castle != Castle)
 			{
-				AudioSource.PlayClipAtPoint (deathS, transform.position, 5.0f);
+				AudioSource.PlayClipAtPoint (deathS, transform.position, 7.0f);
                 Destroy(gameObject);
             }
         }
