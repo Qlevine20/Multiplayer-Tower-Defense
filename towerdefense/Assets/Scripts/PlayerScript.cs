@@ -13,6 +13,8 @@ public class PlayerScript : NetworkBehaviour{
 	[SyncVar]
 	public Color playerColor;
 
+
+
     private GameObject opponentCastle;
     private GameObject point;
     private int monsterCost = 3;
@@ -69,8 +71,6 @@ public class PlayerScript : NetworkBehaviour{
 
         if (!isLocalPlayer)
         {
-            if (gameObject.GetComponent<Health>().GetHealth() == 0)
-                winner = true;
             return;
         }
 
