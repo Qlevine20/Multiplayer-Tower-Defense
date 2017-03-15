@@ -24,7 +24,7 @@ public class Monster : NetworkBehaviour {
                 Castle = playerList[1];
         }
 
-        GetComponent<MeshRenderer>().material.color = mColor;
+        transform.GetChild(2).GetComponent<MeshRenderer>().material.color = mColor;
 
         //Assigns proper castle to monster
 
