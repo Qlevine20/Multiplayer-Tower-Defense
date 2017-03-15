@@ -303,12 +303,17 @@ public class MapGenerator : NetworkBehaviour {
         int x1 = 0;
         while (true)
         {
-            if (map[x1,height/2] == 0)
+            if (map[x1,height/2 + 1] == 0 || map[x1,height/2 + 1] == 2)
             {
                 break;
             }
-            map[x1, height / 2] = 0;
+            map[x1, height / 2 + 1] = 0;
             x1 += 1;
+
+            if(map[x1,height/2 + 2] != 2)
+            {
+                map[x1, height / 2 + 2] = 0;
+            }
             
 
         }
@@ -317,13 +322,18 @@ public class MapGenerator : NetworkBehaviour {
         int x2 = width - 1;
         while (true)
         {
-            if (map[x2, height/2] == 0)
+            if (map[x2, height/2 + 1] == 0 || map[x1, height / 2 + 1] == 2)
             {
                 break;
             }
-            map[x2, height / 2] = 0;
+            map[x2, height / 2 + 1] = 0;
             x2 -= 1;
-            
+
+            if (map[x2, height / 2 + 2] != 2)
+            {
+                map[x2 - 1, height / 2 + 2] = 0;
+            }
+
 
         }
     }

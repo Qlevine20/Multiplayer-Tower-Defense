@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 
 public class Monster : NetworkBehaviour {
     public GameObject Castle;
-    public GameObject locPoint;
+    public Vector3 locPoint;
     public TextMesh cp;
     public Color mColor;
     public int Damage = 5;
@@ -30,8 +30,8 @@ public class Monster : NetworkBehaviour {
 
 
         //Sets the monster's destination to assigned location point
-        if (locPoint)
-            GetComponent<UnityEngine.AI.NavMeshAgent>().destination = locPoint.transform.position;
+        if (locPoint != null)
+            GetComponent<UnityEngine.AI.NavMeshAgent>().destination = locPoint;
 
         GetComponent<UnityEngine.AI.NavMeshAgent>().avoidancePriority = 0;
     }

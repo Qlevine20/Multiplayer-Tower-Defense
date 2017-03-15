@@ -82,7 +82,7 @@ public class PlayerScript : NetworkBehaviour{
         //If player presses "S" & has enough resources, spawns monster and subtracts resource cost
         if (Input.GetKeyDown(KeyCode.S))
         {
-            SpawnMonster();
+            SpawnMonster(Vector3.zero);
         }
 
         if(Input.GetMouseButtonDown(1))
@@ -108,13 +108,14 @@ public class PlayerScript : NetworkBehaviour{
                 if (hit.collider.gameObject.tag == "ControlPoint" && selectedMonster == null)
                 {
                     controlPointSpawn = hit.collider.gameObject;
-                    SpawnMonster();
+                    Debug.Log("con");
+                    SpawnMonster(controlPointSpawn.transform.position);
                 }
 
                 if (hit.collider.gameObject.tag == "ControlPoint" && selectedMonster != null)
                 {
                     CmdChangeMonsterDestination(selectedMonster, hit.collider.gameObject.transform.position);
-                    hit.collider.gameObject.GetComponent<Monster>().cp.fontSize = 200;
+                    selectedMonster.GetComponent<Monster>().cp.fontSize = 200;
                 }
             }
         }
@@ -176,8 +177,12 @@ public class PlayerScript : NetworkBehaviour{
 
                 else
                 {
-                    selectedMonster.GetComponent<Health>().tm.fontSize /= 4;
-                    selectedMonster = null;
+                    if (selectedMonster)
+                    {
+                        selectedMonster.GetComponent<Health>().tm.fontSize /= 4;
+                        selectedMonster = null;
+                    }
+
                 }
 
 
@@ -222,10 +227,10 @@ public class PlayerScript : NetworkBehaviour{
     }
 
     [Command]
-    public void CmdSpawnMonster(Color pColor)
+    public void CmdSpawnMonster(Color pColor, Vector3 loc)
     {
         
-		RpcSpawnMonster (pColor);
+		RpcSpawnMonster (pColor, loc);
     }
 
     [Command]
@@ -241,7 +246,7 @@ public class PlayerScript : NetworkBehaviour{
     }
 
 	[ClientRpc]
-	public void RpcSpawnMonster(Color pColor) {
+	public void RpcSpawnMonster(Color pColor, Vector3 loc) {
         if (isServer)
         {
             //Instantiates monster & sets castle
@@ -262,11 +267,15 @@ public class PlayerScript : NetworkBehaviour{
             }
 
             //Sets monsters travel location to locPoint
-            if (controlPointSpawn == null)
-                mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated - 1)];
+            if (loc == Vector3.zero)
+            {
+                mon.locPoint = paths[Random.Range(0, mapGen.pathsGenerated - 1)].transform.position;
+            }
+
             else
             {
-                mon.locPoint = controlPointSpawn;
+                Debug.Log(loc);
+                mon.locPoint = loc;
                 mon.cp.fontSize = 200;
                 controlPointSpawn = null;
             }
@@ -307,7 +316,7 @@ public class PlayerScript : NetworkBehaviour{
         resourcesText.text = "RESOURCES: " + resources.ToString();
     }
 
-    public void SpawnMonster()
+    public void SpawnMonster(Vector3 loc)
     {
         if (resources >= monsterCost)
         {
@@ -324,7 +333,8 @@ public class PlayerScript : NetworkBehaviour{
             }
 
             AddResources(-monsterCost);
-            CmdSpawnMonster(playerColor);
+            CmdSpawnMonster(playerColor, loc);
+            
 
         }
     }
