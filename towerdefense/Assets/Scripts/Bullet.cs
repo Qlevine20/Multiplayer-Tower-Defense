@@ -35,7 +35,7 @@ public class Bullet : NetworkBehaviour {
                 Health health = co.GetComponentInChildren<Health>();
                 if (health)
                 {
-                    health.ApplyDamage(1);
+                    health.ApplyDamage(3);
                     if (slowUpgrade)
                     {
                         if (slowedSpeed == 0)
