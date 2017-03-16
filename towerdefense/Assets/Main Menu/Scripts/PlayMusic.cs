@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
@@ -14,30 +15,32 @@ public class PlayMusic : MonoBehaviour {
 
 	private AudioSource musicSource;				//Reference to the AudioSource which plays music
 	private float resetTime = .01f;					//Very short time used to fade in near instantly without a click
+	private Dictionary<string,AudioClip> levelTrack;
 
 
-	void Awake () 
+	void Start () 
 	{
 		//Get a component reference to the AudioSource attached to the UI game object
 		musicSource = GetComponent<AudioSource> ();
+		levelTrack = new Dictionary<string,AudioClip> ();
+		levelTrack.Add("Main Menu", titleMusic);
+		levelTrack.Add("Lobby", titleMusic);
+		levelTrack.Add("scene", mainMusic);
 		//Call the PlayLevelMusic function to start playing music
+		PlayLevelMusic();
 	}
 
+	void OnLevelWasLoaded() {
+		PlayLevelMusic ();
+	}
 
 	public void PlayLevelMusic()
 	{
-		//This switch looks at the last loadedLevel number using the scene index in build settings to decide which music clip to play.
-		switch (SceneManager.GetActiveScene().buildIndex)
-		{
-			//If scene index is 0 (usually title scene) assign the clip titleMusic to musicSource
-			case 0:
-				musicSource.clip = titleMusic;
-				break;
-			//If scene index is 1 (usually main scene) assign the clip mainMusic to musicSource
-			case 1:
-				musicSource.clip = mainMusic;
-				break;
-		}
+		string currentScene = SceneManager.GetActiveScene ().name;
+		if (musicSource.clip == levelTrack[currentScene])
+			return;
+		//This switch was garbage so I removed it and put in my own way to switch between tracks without a switch statement. WOW!
+		musicSource.clip = levelTrack[currentScene];
 		//Fade up the volume very quickly, over resetTime seconds (.01 by default)
 		FadeUp (resetTime);
 		//Play the assigned music clip in musicSource
