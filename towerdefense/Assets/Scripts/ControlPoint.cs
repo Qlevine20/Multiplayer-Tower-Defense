@@ -10,6 +10,7 @@ public class ControlPoint : NetworkBehaviour
     public Color red;
     public Color blue;
     public Color pointOwner = Color.black;
+    public bool left = false;
 
     private float controlTime = 5f;
     private float blueCounter;

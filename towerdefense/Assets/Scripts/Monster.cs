@@ -5,11 +5,19 @@ using UnityEngine.Networking;
 public class Monster : NetworkBehaviour {
     public GameObject Castle;
     public Vector3 locPoint;
-    public TextMesh cp;
+
+
+    public PlayerScript.CPoint control;
+
+    [SyncVar]
+    public bool active = false;
+
+    public GameObject cp;
     public Color mColor;
     public int Damage = 5;
 	public AudioClip deathS;
 	public AudioClip sockemS;
+
 
     void Start()
     {
@@ -23,7 +31,7 @@ public class Monster : NetworkBehaviour {
             if ((playerList[1].transform.position - transform.position).sqrMagnitude > farthestCast)
                 Castle = playerList[1];
         }
-
+        cp.SetActive(active);
         transform.GetChild(2).GetComponent<MeshRenderer>().material.color = mColor;
 
         //Assigns proper castle to monster
@@ -32,6 +40,21 @@ public class Monster : NetworkBehaviour {
         //Sets the monster's destination to assigned location point
         if (locPoint != null)
             GetComponent<UnityEngine.AI.NavMeshAgent>().destination = locPoint;
+
+        if(control != PlayerScript.CPoint.none)
+        {
+            GameObject[] g = GameObject.FindGameObjectsWithTag("ControlPoint");
+            if (control == PlayerScript.CPoint.left)
+            {
+
+                GetComponent<UnityEngine.AI.NavMeshAgent>().destination = g[1].transform.position;
+            }
+
+            if(control == PlayerScript.CPoint.right)
+            {
+                GetComponent<UnityEngine.AI.NavMeshAgent>().destination = g[0].transform.position;
+            }
+        }
 
         GetComponent<UnityEngine.AI.NavMeshAgent>().avoidancePriority = 0;
     }
@@ -75,7 +98,7 @@ public class Monster : NetworkBehaviour {
             if(co.gameObject.GetComponent<ControlPoint>().pointOwner == mColor)
             {
                 GetComponent<UnityEngine.AI.NavMeshAgent>().destination = Castle.transform.position;
-                cp.fontSize = 0;
+                cp.SetActive(false);
             }
                 
 
