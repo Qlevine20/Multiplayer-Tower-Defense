@@ -104,12 +104,6 @@ public class PlayerScript : NetworkBehaviour{
 
             if (Physics.Raycast(ray, out hit))
             {
-                //if (hit.collider.gameObject.tag == "Monster" && hit.collider.gameObject.GetComponent<Monster>().Castle == opponentCastle)
-                //{
-                //    CmdChangeMonsterDestination(hit.collider.gameObject, controlPoints[Random.Range(0, 2)].transform.position);
-                //    hit.collider.gameObject.GetComponent<Monster>().cp.fontSize = 200;
-                //}
-
                 if (hit.collider.gameObject.tag == "ControlPoint" && selectedMonster == null)
                 {
                     controlPointSpawn = hit.collider.gameObject;
@@ -118,10 +112,17 @@ public class PlayerScript : NetworkBehaviour{
                     
                 }
 
-                if (hit.collider.gameObject.tag == "ControlPoint" && selectedMonster != null)
+                else if (hit.collider.gameObject.tag == "ControlPoint" && selectedMonster != null)
                 {
                     CmdChangeMonsterDestination(selectedMonster, hit.collider.gameObject.transform.position);
                     selectedMonster.GetComponent<Monster>().active = true;
+                }
+
+                else if(selectedMonster != null)
+                {
+                    CmdChangeMonsterDestination(selectedMonster, opponentCastle.transform.position);
+                    selectedMonster.GetComponent<Monster>().active = false;
+
                 }
             }
         }
@@ -364,7 +365,7 @@ public class PlayerScript : NetworkBehaviour{
             string upgrade = other.GetComponent<TowerFunctions>().GetUpgrade();
             tooltip.text = upgrade + " Tower\n";
             if (upgrade == "Basic")
-                tooltip.text += "Upgrade to Slack (5)";
+                tooltip.text += "Upgrade to Slow (5)";
             if (upgrade == "Slack")
                 tooltip.text += "Upgrade to Longshot (5)";
         }
@@ -380,6 +381,7 @@ public class PlayerScript : NetworkBehaviour{
         }
         else if (other.tag == "ControlPoint")
         {
+            tooltip.transform.position = tpos;
             tooltip.text = "RIGHT CLICK TO SEND SELECTED MONSTER";
         }
 
